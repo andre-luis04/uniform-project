@@ -1,26 +1,22 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { OrderProductEntity } from "src/modules/order_product/entities/orderProductEntity";
-import { VariantsEntity } from "src/modules/variants/entities/variantsEntity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { IProductEntity } from "../interfaces/product.interface";
+import { ProductVariantEntity } from "src/modules/product_variant/entities/product.variant.entity";
+import { TimestampedEntity } from "src/shared/entities/timestamp.entity";
 
+@Entity({ name: "product" })
+export class ProductEntity extends TimestampedEntity implements IProductEntity {
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-@Entity({name : 'product'})
+  @Column()
+  name: string;
 
-export class ProductEntity {
+  @Column()
+  description: string;
 
-    @PrimaryGeneratedColumn('uuid')
-    id! : string;
-    @Column()
-    name : string;
-    @Column()
-    description : string;
-    @Column()
-    price : number;
-
-    @OneToMany(() => OrderProductEntity, (orderProduct) => orderProduct.product)
-    orderProduct : OrderProductEntity;
-
-    @OneToMany(() => VariantsEntity, (variants) => variants.product)
-    variants : VariantsEntity;
-
-
+  @OneToMany(
+    () => ProductVariantEntity,
+    (productVariant) => productVariant.product
+  )
+  productVariant: ProductVariantEntity;
 }
