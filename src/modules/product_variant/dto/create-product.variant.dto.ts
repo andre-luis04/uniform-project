@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { isDecimal, IsNotEmpty, isNumber, IsString } from "class-validator";
 import { IProductVariants } from "../interfaces/product.variant.interface";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -16,4 +16,7 @@ export class CreateProductVariantDto implements Omit<IProductVariants, "id"> {
   @ApiProperty()
   @IsString()
   id_size: string;
+
+  @ApiProperty()
+  price: number;
 }

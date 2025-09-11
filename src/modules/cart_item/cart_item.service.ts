@@ -21,11 +21,28 @@ export class CartItemService {
     return await this.cartItemRepository.find();
   }
 
-  async findOneView(id: string): Promise<CartItemEntity> {
-    const cartItem = await this.cartItemRepository.findOne({ where: { id } });
+  async findByCart(idCart: string): Promise<CartItemEntity[]> {
+    const cartItem = await this.cartItemRepository.find({
+      where: { id_cart: idCart },
+      relations: {
+        productVariant: { color: true, product: true, size: true },
+      },
+      select: {
+        id_variant: true,
+        productVariant: {
+          id: true,
+          color: { id: true, name: true },
+          product: { id: true, name: true },
+          size: { id: true, size: true },
+          price: true,
+        },
+        quantity: true,
+      },
+    });
     if (!cartItem) {
       throw new NotFoundException("item não encontrado no carrinho");
     }
+
     return cartItem;
   }
 

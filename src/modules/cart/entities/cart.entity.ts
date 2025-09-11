@@ -17,7 +17,7 @@ export class CartEntity extends TimestampedEntity implements Icart {
   id: string;
 
   @Column({ name: "id_user" })
-  id_client: string;
+  id_user: string;
 
   @OneToOne(() => UserEntity, (user) => user.cart)
   @JoinColumn({ name: "id_user" })

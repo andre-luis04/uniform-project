@@ -4,6 +4,7 @@ import { UpdateProductVariantDto } from "./dto/update-product.variant.dto";
 import { ProductVariantEntity } from "./entities/product.variant.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { ProductVariantResponseDto } from "./dto/response-product.variant.dto";
 
 @Injectable()
 export class ProductVariantsService {
@@ -20,10 +21,18 @@ export class ProductVariantsService {
     await this.productVariantsRepository.save(productVariant);
   }
 
-  async findAll(): Promise<ProductVariantEntity[]> {
-    return await this.productVariantsRepository.find({
+  async findAll(): Promise<ProductVariantResponseDto[]> {
+    const items = await this.productVariantsRepository.find({
       relations: { color: true, product: true, size: true },
     });
+    const response = items.map((item) => ({
+      id: item.id,
+      product: item.product.name,
+      color: item.color.name,
+      size: item.size.size,
+      price: item.price,
+    }));
+    return response;
   }
 
   async findOne(id: string): Promise<ProductVariantEntity> {

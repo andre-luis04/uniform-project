@@ -5,11 +5,6 @@ import { ApiProperty } from "@nestjs/swagger";
 export class CreateOrderDto implements Omit<IOrder, "id" | "created_at"> {
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumber()
-  total_price: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
   @IsString()
-  id_client: string;
+  id_user: string;
 }

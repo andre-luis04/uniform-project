@@ -10,14 +10,15 @@ import {
 import { OrderService } from "./order.service";
 import { CreateOrderDto } from "./dto/create-order.dto";
 import { UpdateOrderDto } from "./dto/update-order.dto";
+import { UUID } from "crypto";
 
 @Controller("order")
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(createOrderDto);
+  @Post("finalize")
+  finalizeOrder(@Body("userId") userId: string): Promise<void> {
+    return this.orderService.finalizeOrder(userId);
   }
 
   @Get()

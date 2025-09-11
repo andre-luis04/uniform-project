@@ -16,16 +16,15 @@ export class OrderEntity extends TimestampedEntity implements IOrder {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ type: "decimal" })
-  total_price: number;
-
-  @Column({ name: "id_client" })
-  id_client: string;
+  @Column({ name: "id_user" })
+  id_user: string;
 
   @ManyToOne(() => UserEntity, (user) => user.orders)
-  @JoinColumn({ name: "id_client" })
+  @JoinColumn({ name: "id_user" })
   user: UserEntity;
 
-  @OneToMany(() => OrderVariantEntity, (orderVariant) => orderVariant.order)
-  orderVariant: OrderVariantEntity;
+  @OneToMany(() => OrderVariantEntity, (orderVariant) => orderVariant.order, {
+    cascade: true,
+  })
+  orderVariant: OrderVariantEntity[];
 }

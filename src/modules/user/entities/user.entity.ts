@@ -6,7 +6,7 @@ import {
   OneToOne,
 } from "typeorm";
 import { IUser } from "../interfaces/user.interface";
-import { CartEntity } from "src/modules/cart/entities/mcart.entity";
+import { CartEntity } from "src/modules/cart/entities/cart.entity";
 import { OrderEntity } from "src/modules/order/entities/order.entity";
 import { TimestampedEntity } from "src/shared/entities/timestamp.entity";
 

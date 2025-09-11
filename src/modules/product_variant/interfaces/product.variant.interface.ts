@@ -3,4 +3,5 @@ export interface IProductVariants {
   id_product: string;
   id_color: string;
   id_size?: string;
+  price: number;
 }

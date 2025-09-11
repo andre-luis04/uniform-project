@@ -13,8 +13,8 @@ import { ProductVariantsModule } from "./modules/product_variant/variants.module
 import { ProductVariantEntity } from "./modules/product_variant/entities/product.variant.entity";
 import { CartItemModule } from "./modules/cart_item/cart_item.module";
 import { CartItemEntity } from "./modules/cart_item/entities/cart_item.entity";
-import { McartModule } from "./modules/cart/mcart.module";
-import { CartEntity } from "./modules/cart/entities/mcart.entity";
+import { CartModule } from "./modules/cart/cart.module";
+import { CartEntity } from "./modules/cart/entities/cart.entity";
 import { OrderModule } from "./modules/order/order.module";
 import { OrderEntity } from "./modules/order/entities/order.entity";
 import { OrderVariantModule } from "./modules/order_variant/order_variant.module";
@@ -50,7 +50,7 @@ import { UserModule } from "./modules/user/user.module";
     ProductVariantsModule,
     UserModule,
     CartItemModule,
-    McartModule,
+    CartModule,
     OrderModule,
     OrderVariantModule,
   ],

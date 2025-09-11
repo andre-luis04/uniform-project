@@ -30,7 +30,7 @@ export class ProductVariantEntity
   id_color: string;
 
   @Column({ name: "price", type: "decimal" })
-  price: string;
+  price: number;
 
   @Column({ name: "id_size", nullable: true })
   id_size?: string;

@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { ICartItem } from "../interfaces/cartItem.interface";
-import { CartEntity } from "src/modules/cart/entities/mcart.entity";
+import { CartEntity } from "src/modules/cart/entities/cart.entity";
 import { TimestampedEntity } from "src/shared/entities/timestamp.entity";
 
 @Entity({ name: "cart_item" })
@@ -22,10 +22,10 @@ export class CartItemEntity extends TimestampedEntity implements ICartItem {
   quantity: number;
 
   @Column({ name: "id_cart", type: "uuid" })
-  cart_id: number;
+  id_cart: string;
 
   @Column({ name: "id_product_variant" })
-  variant_id: string;
+  id_variant: string;
 
   @OneToOne(
     () => ProductVariantEntity,

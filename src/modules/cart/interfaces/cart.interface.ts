@@ -1,4 +1,4 @@
 export interface Icart {
-    id : string;
-    id_client: string;
+  id: string;
+  id_user: string;
 }
