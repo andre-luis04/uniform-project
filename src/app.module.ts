@@ -21,6 +21,7 @@ import { OrderVariantModule } from "./modules/order_variant/order_variant.module
 import { OrderVariantEntity } from "./modules/order_variant/entities/order_variant.entity";
 import { UserEntity } from "./modules/user/entities/user.entity";
 import { UserModule } from "./modules/user/user.module";
+// import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { UserModule } from "./modules/user/user.module";
     CartModule,
     OrderModule,
     OrderVariantModule,
+    // AuthModule,
   ],
   controllers: [],
   providers: [],

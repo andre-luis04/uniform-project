@@ -10,7 +10,9 @@ import {
 import { ProductVariantsService } from "./variants.service";
 import { CreateProductVariantDto } from "./dto/create-product.variant.dto";
 import { UpdateProductVariantDto } from "./dto/update-product.variant.dto";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("product-variant")
 @Controller("product-variant")
 export class ProductVariantsController {
   constructor(

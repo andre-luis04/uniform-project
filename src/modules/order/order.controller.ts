@@ -17,7 +17,7 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post("finalize")
-  finalizeOrder(@Body("userId") userId: string): Promise<void> {
+  finalizeOrder(@Param("userId") userId: string): Promise<void> {
     return this.orderService.finalizeOrder(userId);
   }
 

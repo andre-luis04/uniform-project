@@ -9,6 +9,7 @@ import { OrderEntity } from "./entities/order.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { UserEntity } from "../user/entities/user.entity";
+import { CartItemService } from "../cart_item/cart_item.service";
 
 @Injectable()
 export class OrderService {
@@ -16,7 +17,8 @@ export class OrderService {
     @InjectRepository(OrderEntity)
     private readonly orderRepository: Repository<OrderEntity>,
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>
+    private readonly userRepository: Repository<UserEntity>,
+    private cartItemService: CartItemService
   ) {}
 
   async create(createOrderDto: CreateOrderDto): Promise<void> {
@@ -33,11 +35,11 @@ export class OrderService {
       },
       select: {
         orderVariant: {
-          id_variant: true,
+          id_product_variant: true,
           productVariant: {
             id: true,
             product: { id: true, name: true },
-            color: { id: true, name: true },
+            color: { id: true, color: true },
             size: { id: true, size: true },
             price: true,
           },
@@ -91,10 +93,10 @@ export class OrderService {
     const order = this.orderRepository.create({
       user: user,
       orderVariant: user.cart.cartItem.map((item) => ({
-        id_variant: item.id_variant,
-        quantity: item.quantity,
+        id_product_variant: item.id_variant,
       })),
     });
     await this.orderRepository.save(order);
+    await this.cartItemService.removeByCart(user.cart.id);
   }
 }

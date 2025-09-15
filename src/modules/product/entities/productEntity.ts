@@ -8,10 +8,10 @@ export class ProductEntity extends TimestampedEntity implements IProductEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({ name: "name" })
   name: string;
 
-  @Column()
+  @Column({ name: "description" })
   description: string;
 
   @OneToMany(

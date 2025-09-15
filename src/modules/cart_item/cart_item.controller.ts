@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from "@nestjs/common";
 import { CartItemService } from "./cart_item.service";
 import { CreateCartItemDto } from "./dto/create-cart_item.dto";
@@ -24,8 +25,8 @@ export class CartItemController {
   findAll() {
     return this.cartItemService.findAll();
   }
-  @Get("cart")
-  findByCart(@Body("idCart") idCart: string) {
+  @Get("by-cart")
+  findByCart(@Param("idCart") idCart: string) {
     return this.cartItemService.findByCart(idCart);
   }
 

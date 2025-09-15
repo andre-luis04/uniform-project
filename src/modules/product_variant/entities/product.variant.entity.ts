@@ -15,7 +15,7 @@ import { CartItemEntity } from "src/modules/cart_item/entities/cart_item.entity"
 import { OrderVariantEntity } from "src/modules/order_variant/entities/order_variant.entity";
 import { TimestampedEntity } from "src/shared/entities/timestamp.entity";
 
-@Entity({ name: "product_variants" })
+@Entity({ name: "product_variant" })
 export class ProductVariantEntity
   extends TimestampedEntity
   implements IProductVariants

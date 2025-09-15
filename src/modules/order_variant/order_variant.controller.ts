@@ -11,7 +11,7 @@ import { OrderVariantService } from "./order_variant.service";
 import { CreateOrderVariantDto } from "./dto/create-order_variant.dto";
 import { UpdateOrderVariantDto } from "./dto/update-order_variant.dto";
 
-@Controller("order-variant")
+@Controller("order-product-variant")
 export class OrderVariantController {
   constructor(private readonly orderVariantService: OrderVariantService) {}
 

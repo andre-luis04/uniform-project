@@ -7,7 +7,7 @@ import { TimestampedEntity } from "src/shared/entities/timestamp.entity";
 export class SizeEntity extends TimestampedEntity implements IsizeEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
-  @Column()
+  @Column({ name: "size" })
   size: string;
 
   @OneToMany(

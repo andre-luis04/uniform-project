@@ -15,15 +15,15 @@ export class UserEntity extends TimestampedEntity implements IUser {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({ name: "user-name" })
   name: string;
 
-  @Column()
+  @Column({ name: "phone" })
   phone: string;
 
   @OneToMany(() => OrderEntity, (orders) => orders.user)
   orders: OrderEntity;
 
-  @OneToOne(() => CartEntity, (cart) => cart.user)
+  @OneToOne(() => CartEntity, (cart) => cart.user, { cascade: true })
   cart: CartEntity;
 }

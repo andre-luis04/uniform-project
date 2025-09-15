@@ -13,7 +13,7 @@ export class CartItemService {
   ) {}
 
   async create(createCartItemDto: CreateCartItemDto): Promise<void> {
-    const cartItem = await this.cartItemRepository.create(createCartItemDto);
+    const cartItem = this.cartItemRepository.create(createCartItemDto);
     await this.cartItemRepository.save(cartItem);
   }
 
@@ -21,7 +21,9 @@ export class CartItemService {
     return await this.cartItemRepository.find();
   }
 
-  async findByCart(idCart: string): Promise<CartItemEntity[]> {
+  async findByCart(
+    idCart: string
+  ): Promise<{ items: CartItemEntity[]; totalCart: Number }> {
     const cartItem = await this.cartItemRepository.find({
       where: { id_cart: idCart },
       relations: {
@@ -31,7 +33,7 @@ export class CartItemService {
         id_variant: true,
         productVariant: {
           id: true,
-          color: { id: true, name: true },
+          color: { id: true, color: true },
           product: { id: true, name: true },
           size: { id: true, size: true },
           price: true,
@@ -40,10 +42,27 @@ export class CartItemService {
       },
     });
     if (!cartItem) {
-      throw new NotFoundException("item não encontrado no carrinho");
+      throw new NotFoundException("Não há itens no carrinho");
     }
 
-    return cartItem;
+    const cartItemsWithTotal = cartItem.map((item) => {
+      const price = Number(item.productVariant.price);
+      const quantity = item.quantity;
+      return {
+        ...item,
+        ProductTotalPrice: price * quantity,
+      };
+    });
+
+    const cartTotal = cartItemsWithTotal.reduce(
+      (sum, item) => sum + item.ProductTotalPrice,
+      0
+    );
+
+    return {
+      items: cartItemsWithTotal,
+      totalCart: cartTotal,
+    };
   }
 
   async findOne(id: string): Promise<CartItemEntity> {
@@ -64,6 +83,11 @@ export class CartItemService {
 
   async remove(id: string): Promise<void> {
     const cartItem = await this.findOne(id);
+    await this.cartItemRepository.remove(cartItem);
+  }
+
+  async removeByCart(id_cart: string): Promise<void> {
+    const cartItem = await this.cartItemRepository.find({ where: { id_cart } });
     await this.cartItemRepository.remove(cartItem);
   }
 }

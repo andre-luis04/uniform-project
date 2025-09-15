@@ -1,4 +1,4 @@
-export interface IcolorEntity{
-    id : string;
-    name: string;
+export interface IcolorEntity {
+  id: string;
+  color: string;
 }

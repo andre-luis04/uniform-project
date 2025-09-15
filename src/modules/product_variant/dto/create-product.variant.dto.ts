@@ -17,6 +17,6 @@ export class CreateProductVariantDto implements Omit<IProductVariants, "id"> {
   @IsString()
   id_size: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: "49.99" })
   price: number;
 }

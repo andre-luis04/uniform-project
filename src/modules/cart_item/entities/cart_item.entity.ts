@@ -24,7 +24,7 @@ export class CartItemEntity extends TimestampedEntity implements ICartItem {
   @Column({ name: "id_cart", type: "uuid" })
   id_cart: string;
 
-  @Column({ name: "id_product_variant" })
+  @Column({ name: "id_product_variant", type: "uuid" })
   id_variant: string;
 
   @OneToOne(

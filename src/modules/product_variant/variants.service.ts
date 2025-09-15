@@ -24,11 +24,12 @@ export class ProductVariantsService {
   async findAll(): Promise<ProductVariantResponseDto[]> {
     const items = await this.productVariantsRepository.find({
       relations: { color: true, product: true, size: true },
+      order: { created_at: { direction: "ASC" } },
     });
     const response = items.map((item) => ({
       id: item.id,
       product: item.product.name,
-      color: item.color.name,
+      color: item.color.color,
       size: item.size.size,
       price: item.price,
     }));

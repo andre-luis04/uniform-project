@@ -3,8 +3,8 @@ import { IcolorEntity } from "../interfaces/color.interface";
 import { IsNotEmpty, IsString } from "class-validator";
 
 export class CreateColorDto implements Omit<IcolorEntity, "id"> {
-  @ApiProperty()
+  @ApiProperty({ example: "Azul" })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  color: string;
 }
