@@ -12,7 +12,7 @@ import { CreateProductVariantDto } from "./dto/create-product.variant.dto";
 import { UpdateProductVariantDto } from "./dto/update-product.variant.dto";
 import { ApiTags } from "@nestjs/swagger";
 
-@ApiTags("product-variant")
+@ApiTags("Product variant")
 @Controller("product-variant")
 export class ProductVariantsController {
   constructor(

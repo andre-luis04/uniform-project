@@ -5,25 +5,29 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "./entities/user.entity";
 import { Repository } from "typeorm";
 import { CartEntity } from "../cart/entities/cart.entity";
+import { CartService } from "../cart/cart.service";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>
+    private readonly userRepository: Repository<UserEntity>,
+    private cartService: CartService
   ) {}
   async create(createUserDto: CreateUserDto): Promise<void> {
-    const user = await this.userRepository.create(createUserDto);
-
-    const cart = new CartEntity();
-    cart.user = user;
-    user.cart = cart;
+    const user = this.userRepository.create(createUserDto);
 
     await this.userRepository.save(user);
+
+    await this.cartService.create({ id_user: user.id });
   }
 
   async findAll(): Promise<UserEntity[]> {
     return await this.userRepository.find();
+  }
+
+  async findAllDeletedUser(): Promise<UserEntity[]> {
+    return await this.userRepository.find({ withDeleted: true });
   }
 
   async findOne(id: string): Promise<UserEntity> {
@@ -41,6 +45,7 @@ export class UserService {
 
   async remove(id: string): Promise<void> {
     const user = await this.findOne(id);
-    await this.userRepository.remove(user);
+
+    await this.userRepository.softDelete(user.id);
   }
 }

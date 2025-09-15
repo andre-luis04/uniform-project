@@ -4,11 +4,14 @@ import {
   Column,
   OneToMany,
   OneToOne,
+  DeleteDateColumn,
+  BeforeInsert,
 } from "typeorm";
 import { IUser } from "../interfaces/user.interface";
 import { CartEntity } from "src/modules/cart/entities/cart.entity";
 import { OrderEntity } from "src/modules/order/entities/order.entity";
 import { TimestampedEntity } from "src/shared/entities/timestamp.entity";
+import * as bcrypt from "bcrypt";
 
 @Entity({ name: "user" })
 export class UserEntity extends TimestampedEntity implements IUser {
@@ -21,8 +24,11 @@ export class UserEntity extends TimestampedEntity implements IUser {
   @Column({ name: "phone" })
   phone: string;
 
+  @DeleteDateColumn()
+  deleted_at?: Date;
+
   @OneToMany(() => OrderEntity, (orders) => orders.user)
-  orders: OrderEntity;
+  orders: OrderEntity[];
 
   @OneToOne(() => CartEntity, (cart) => cart.user, { cascade: true })
   cart: CartEntity;

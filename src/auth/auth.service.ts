@@ -9,5 +9,8 @@
 //     private jwtService: JwtService
 //   ) {}
 
-//   async signIn(username: string, pass: string): ;
+//   async signIn(username: string, pass: string): Promise<void> {
+//     const user = await this.userService.findOne(username);
+//     if(user.)
+//   }
 // }

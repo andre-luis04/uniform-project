@@ -10,15 +10,12 @@ import {
 import { OrderVariantService } from "./order_variant.service";
 import { CreateOrderVariantDto } from "./dto/create-order_variant.dto";
 import { UpdateOrderVariantDto } from "./dto/update-order_variant.dto";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("Order product variant")
 @Controller("order-product-variant")
 export class OrderVariantController {
   constructor(private readonly orderVariantService: OrderVariantService) {}
-
-  @Post()
-  create(@Body() createOrderVariantDto: CreateOrderVariantDto) {
-    return this.orderVariantService.create(createOrderVariantDto);
-  }
 
   @Get()
   findAll() {

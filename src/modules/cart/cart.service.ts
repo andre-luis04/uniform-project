@@ -15,7 +15,7 @@ export class CartService {
   ) {}
 
   async create(createCartDto: CreateCartDto): Promise<void> {
-    const cart = await this.cartRepository.create(createCartDto);
+    const cart = this.cartRepository.create(createCartDto);
     await this.cartRepository.save(cart);
   }
 

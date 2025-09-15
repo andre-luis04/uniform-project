@@ -2,8 +2,8 @@ import { Controller, Get, Param } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { ApiTags } from "@nestjs/swagger";
 
-@ApiTags("products")
-@Controller("produtos")
+@ApiTags("Products")
+@Controller("products")
 export class UserProductController {
   constructor(private readonly productService: ProductService) {}
 
