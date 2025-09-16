@@ -1,8 +1,13 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsString, IsEmail } from "class-validator";
 import { IUser } from "../interfaces/user.interface";
 
-export class CreateUserDto implements Omit<IUser, "id"> {
+export class ResponseUserDto implements Omit<IUser, "password"> {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
@@ -17,8 +22,4 @@ export class CreateUserDto implements Omit<IUser, "id"> {
   @IsNotEmpty()
   @IsEmail()
   email: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  password: string;
 }

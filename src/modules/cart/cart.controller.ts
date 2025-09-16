@@ -10,9 +10,10 @@ import {
 import { CartService } from "./cart.service";
 import { CreateCartDto } from "./dto/create-cart.dto";
 import { UpdateCartDto } from "./dto/update-cart.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 @ApiTags("Cart")
+@ApiBearerAuth()
 @Controller("cart")
 export class CartController {
   constructor(private readonly cartService: CartService) {}

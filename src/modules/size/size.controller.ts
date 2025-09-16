@@ -10,9 +10,10 @@ import {
 import { SizeService } from "./size.service";
 import { CreateSizeDto } from "./dto/create-size.dto";
 import { UpdateSizeDto } from "./dto/update-size.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 @ApiTags("Size")
+@ApiBearerAuth()
 @Controller("size")
 export class SizeController {
   constructor(private readonly sizeService: SizeService) {}

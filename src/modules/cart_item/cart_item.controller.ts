@@ -11,9 +11,10 @@ import {
 import { CartItemService } from "./cart_item.service";
 import { CreateCartItemDto } from "./dto/create-cart_item.dto";
 import { UpdateCartItemDto } from "./dto/update-cart_item.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 @ApiTags("Cart item")
+@ApiBearerAuth()
 @Controller("cart-item")
 export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}

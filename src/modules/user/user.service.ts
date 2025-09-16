@@ -6,6 +6,7 @@ import { UserEntity } from "./entities/user.entity";
 import { Repository } from "typeorm";
 import { CartEntity } from "../cart/entities/cart.entity";
 import { CartService } from "../cart/cart.service";
+import { ResponseUserDto } from "./dto/user.response.dto";
 
 @Injectable()
 export class UserService {
@@ -22,20 +23,56 @@ export class UserService {
     await this.cartService.create({ id_user: user.id });
   }
 
-  async findAll(): Promise<UserEntity[]> {
-    return await this.userRepository.find();
+  async findAll(): Promise<ResponseUserDto[]> {
+    const users = await this.userRepository.find();
+
+    const result = users.map((user) => {
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      };
+    });
+
+    return result;
   }
 
-  async findAllDeletedUser(): Promise<UserEntity[]> {
-    return await this.userRepository.find({ withDeleted: true });
+  async findAllDeletedUser(): Promise<ResponseUserDto[]> {
+    const users = await this.userRepository.find({ withDeleted: true });
+
+    const result = users.map((user) => {
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      };
+    });
+
+    return result;
   }
 
-  async findOne(id: string): Promise<UserEntity> {
-    const client = await this.userRepository.findOne({ where: { id } });
-    if (!client) {
+  async findOne(id: string): Promise<ResponseUserDto> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
       throw new NotFoundException("Cliente não encontrado");
     }
-    return client;
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+    };
+  }
+
+  async findByEmail(email: string): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException("email não cadastrado");
+    }
+    return user;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<void> {

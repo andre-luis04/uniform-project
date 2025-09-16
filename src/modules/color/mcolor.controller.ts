@@ -10,9 +10,10 @@ import {
 import { ColorService } from "./mcolor.service";
 import { CreateColorDto } from "./dto/create-color.dto";
 import { UpdateColorDto } from "./dto/update-color.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 @ApiTags("Color")
+@ApiBearerAuth()
 @Controller("color")
 export class ColorController {
   constructor(private readonly colorService: ColorService) {}

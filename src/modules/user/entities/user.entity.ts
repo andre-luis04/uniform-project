@@ -24,6 +24,18 @@ export class UserEntity extends TimestampedEntity implements IUser {
   @Column({ name: "phone" })
   phone: string;
 
+  @Column({ name: "email" })
+  email: string;
+
+  @Column({ name: "password", nullable: false })
+  password: string;
+
+  @BeforeInsert()
+  async hashPassword() {
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(this.password, salt);
+  }
+
   @DeleteDateColumn()
   deleted_at?: Date;
 

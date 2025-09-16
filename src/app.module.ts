@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { db_database, db_password } from "../constants";
-import { db_user } from "../constants";
-import { db_host } from "../constants";
+import { db_database, db_password } from "./constants";
+import { db_user } from "./constants";
+import { db_host } from "./constants";
 import { ProductModule } from "./modules/product/product.module";
 import { SizeModule } from "./modules/size/size.module";
 import { ProductEntity } from "./modules/product/entities/productEntity";
@@ -21,7 +21,7 @@ import { OrderVariantModule } from "./modules/order_variant/order_variant.module
 import { OrderVariantEntity } from "./modules/order_variant/entities/order_variant.entity";
 import { UserEntity } from "./modules/user/entities/user.entity";
 import { UserModule } from "./modules/user/user.module";
-// import { AuthModule } from './auth/auth.module';
+import { AuthModule } from "./modules/auth/auth.module";
 
 @Module({
   imports: [
@@ -54,7 +54,7 @@ import { UserModule } from "./modules/user/user.module";
     CartModule,
     OrderModule,
     OrderVariantModule,
-    // AuthModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

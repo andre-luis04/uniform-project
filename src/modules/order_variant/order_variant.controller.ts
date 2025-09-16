@@ -10,9 +10,10 @@ import {
 import { OrderVariantService } from "./order_variant.service";
 import { CreateOrderVariantDto } from "./dto/create-order_variant.dto";
 import { UpdateOrderVariantDto } from "./dto/update-order_variant.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 @ApiTags("Order product variant")
+@ApiBearerAuth()
 @Controller("order-product-variant")
 export class OrderVariantController {
   constructor(private readonly orderVariantService: OrderVariantService) {}
