@@ -15,7 +15,7 @@ export class CreateUserDto implements Omit<IUser, "id"> {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsEmail()
+  @IsEmail({ require_tld: true })
   email: string;
 
   @ApiProperty()

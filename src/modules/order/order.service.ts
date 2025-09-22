@@ -21,11 +21,6 @@ export class OrderService {
     private cartItemService: CartItemService
   ) {}
 
-  async create(createOrderDto: CreateOrderDto): Promise<void> {
-    const order = await this.orderRepository.create(createOrderDto);
-    await this.orderRepository.save(order);
-  }
-
   async findAll(): Promise<OrderEntity[]> {
     return await this.orderRepository.find({
       relations: {
@@ -77,6 +72,7 @@ export class OrderService {
   }
 
   async finalizeOrder(userId: string): Promise<void> {
+    console.log("FINALIZANDO PEDIDO PARA USUÁRIO:", userId);
     const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: {

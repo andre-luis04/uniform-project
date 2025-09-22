@@ -6,8 +6,13 @@ import { jwtConstant } from "../../constants";
 import { UserModule } from "src/modules/user/user.module";
 import { APP_GUARD } from "@nestjs/core";
 import { AuthGuard } from "./auth.guard";
+import { PassportModule } from "@nestjs/passport";
+import { JwtStrategy } from "./strategies/jwt.strategy";
+import { ConfigModule } from "@nestjs/config";
 @Module({
   imports: [
+    ConfigModule,
+    PassportModule,
     UserModule,
     JwtModule.register({
       global: true,
@@ -18,6 +23,7 @@ import { AuthGuard } from "./auth.guard";
   controllers: [AuthController],
   providers: [
     AuthService,
+    JwtStrategy,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

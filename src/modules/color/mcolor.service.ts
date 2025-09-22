@@ -3,7 +3,7 @@ import { CreateColorDto } from "./dto/create-color.dto";
 import { UpdateColorDto } from "./dto/update-color.dto";
 import { ColorEntity } from "./entities/color.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { FindOneOptions, Repository } from "typeorm";
 
 @Injectable()
 export class ColorService {
@@ -20,6 +20,18 @@ export class ColorService {
     return await this.colorRepository.find();
   }
 
+  async getExistingColor(criteria: FindOneOptions): Promise<ColorEntity> {
+    const color = await this.colorRepository.findOne(criteria);
+
+    if (!color) {
+      throw new NotFoundException({
+        message: `Não foi possível encontrar a cor com os seguintes critérios: ${criteria.where}`,
+      });
+    }
+
+    return color;
+  }
+
   async findOne(id: string): Promise<ColorEntity> {
     const color = await this.colorRepository.findOne({ where: { id } });
     if (!color) {
@@ -29,7 +41,10 @@ export class ColorService {
   }
 
   async update(id: string, updateColorDto: UpdateColorDto): Promise<void> {
-    const color = await this.findOne(id);
+    const color = await this.getExistingColor({
+      where: { id: id },
+    });
+
     await this.colorRepository.update(color.id, updateColorDto);
   }
 

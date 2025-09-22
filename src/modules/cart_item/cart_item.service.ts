@@ -41,12 +41,13 @@ export class CartItemService {
         quantity: true,
       },
     });
-    if (!cartItem) {
+
+    if (cartItem.length === 0) {
       throw new NotFoundException("Não há itens no carrinho");
     }
 
     const cartItemsWithTotal = cartItem.map((item) => {
-      const price = Number(item.productVariant.price);
+      const price = item.productVariant.price;
       const quantity = item.quantity;
       return {
         ...item,

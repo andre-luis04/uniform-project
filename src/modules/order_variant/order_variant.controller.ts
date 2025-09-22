@@ -19,6 +19,7 @@ export class OrderVariantController {
   constructor(private readonly orderVariantService: OrderVariantService) {}
 
   @Get()
+  @ApiBearerAuth()
   findAll() {
     return this.orderVariantService.findAll();
   }
