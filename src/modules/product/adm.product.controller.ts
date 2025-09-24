@@ -7,15 +7,21 @@ import {
   Param,
   Delete,
   HttpCode,
+  UseGuards,
 } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { Roles } from "src/decorators/roles.decorator";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { AuthGuard } from "@nestjs/passport";
 
-@ApiTags("Products")
+@ApiTags("Product")
 @ApiBearerAuth()
-@Controller("products")
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Roles("admin")
+@Controller("admin/product")
 export class AdmProductController {
   constructor(private readonly productService: ProductService) {}
 
@@ -23,16 +29,6 @@ export class AdmProductController {
   @Post()
   create(@Body() createProductDto: CreateProductDto): Promise<void> {
     return this.productService.create(createProductDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.productService.findAll();
-  }
-
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.productService.findOne(id);
   }
 
   @Patch(":id")

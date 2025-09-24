@@ -6,14 +6,20 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { OrderVariantService } from "./order_variant.service";
 import { CreateOrderVariantDto } from "./dto/create-order_variant.dto";
 import { UpdateOrderVariantDto } from "./dto/update-order_variant.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { AuthGuard } from "@nestjs/passport";
+import { Roles } from "src/decorators/roles.decorator";
+import { RolesGuard } from "../auth/guards/roles.guard";
 
 @ApiTags("Order product variant")
 @ApiBearerAuth()
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Roles("admin")
 @Controller("order-product-variant")
 export class OrderVariantController {
   constructor(private readonly orderVariantService: OrderVariantService) {}

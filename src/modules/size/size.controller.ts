@@ -6,15 +6,21 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { SizeService } from "./size.service";
 import { CreateSizeDto } from "./dto/create-size.dto";
 import { UpdateSizeDto } from "./dto/update-size.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { AuthGuard } from "@nestjs/passport";
+import { Roles } from "src/decorators/roles.decorator";
+import { RolesGuard } from "../auth/guards/roles.guard";
 
 @ApiTags("Size")
 @ApiBearerAuth()
-@Controller("size")
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Roles("admin")
+@Controller("admin/size")
 export class SizeController {
   constructor(private readonly sizeService: SizeService) {}
 

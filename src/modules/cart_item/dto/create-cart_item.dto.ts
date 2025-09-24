@@ -13,8 +13,4 @@ export class CreateCartItemDto
   @ApiProperty()
   @IsNotEmpty()
   id_variant: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  id_cart: string;
 }

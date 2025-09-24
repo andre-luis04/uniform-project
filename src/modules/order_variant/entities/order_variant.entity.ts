@@ -24,7 +24,12 @@ export class OrderVariantEntity
   @Column({ name: "id_order" })
   id_order: string;
 
-  @ManyToOne(() => OrderEntity, (order) => order.orderVariant)
+  @Column({ name: "quantity" })
+  quantity: number;
+
+  @ManyToOne(() => OrderEntity, (order) => order.orderVariant, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "id_order" })
   order: OrderEntity;
 

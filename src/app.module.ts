@@ -13,8 +13,6 @@ import { ProductVariantsModule } from "./modules/product_variant/variants.module
 import { ProductVariantEntity } from "./modules/product_variant/entities/product.variant.entity";
 import { CartItemModule } from "./modules/cart_item/cart_item.module";
 import { CartItemEntity } from "./modules/cart_item/entities/cart_item.entity";
-import { CartModule } from "./modules/cart/cart.module";
-import { CartEntity } from "./modules/cart/entities/cart.entity";
 import { OrderModule } from "./modules/order/order.module";
 import { OrderEntity } from "./modules/order/entities/order.entity";
 import { OrderVariantModule } from "./modules/order_variant/order_variant.module";
@@ -22,6 +20,7 @@ import { OrderVariantEntity } from "./modules/order_variant/entities/order_varia
 import { UserEntity } from "./modules/user/entities/user.entity";
 import { UserModule } from "./modules/user/user.module";
 import { AuthModule } from "./modules/auth/auth.module";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
   imports: [
@@ -40,7 +39,6 @@ import { AuthModule } from "./modules/auth/auth.module";
         SizeEntity,
         ColorEntity,
         CartItemEntity,
-        CartEntity,
         ProductVariantEntity,
       ],
       synchronize: true,
@@ -51,10 +49,10 @@ import { AuthModule } from "./modules/auth/auth.module";
     ProductVariantsModule,
     UserModule,
     CartItemModule,
-    CartModule,
     OrderModule,
     OrderVariantModule,
     AuthModule,
+    EventEmitterModule.forRoot(),
   ],
   controllers: [],
   providers: [],

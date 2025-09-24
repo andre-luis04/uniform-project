@@ -17,19 +17,16 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { currentUser } from "src/decorators/current.user.decorator";
 import { UserEntity } from "../user/entities/user.entity";
 import { AuthGuard } from "@nestjs/passport";
+import { Roles } from "src/decorators/roles.decorator";
+import { RolesGuard } from "../auth/guards/roles.guard";
 
 @ApiTags("Order")
 @ApiBearerAuth()
-@Controller("order")
-export class OrderController {
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Roles("admin")
+@Controller("admin/order")
+export class AdmOrderController {
   constructor(private readonly orderService: OrderService) {}
-
-  @UseGuards(AuthGuard("jwt"))
-  @Post("finalize")
-  finalizeOrder(@currentUser() user): Promise<void> {
-    console.log("FINALIZE ORDER: ", user);
-    return this.orderService.finalizeOrder(user.userId);
-  }
 
   @Get()
   findAll() {

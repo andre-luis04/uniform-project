@@ -6,15 +6,21 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { ColorService } from "./mcolor.service";
 import { CreateColorDto } from "./dto/create-color.dto";
 import { UpdateColorDto } from "./dto/update-color.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { AuthGuard } from "@nestjs/passport";
+import { Roles } from "src/decorators/roles.decorator";
+import { RolesGuard } from "../auth/guards/roles.guard";
 
 @ApiTags("Color")
 @ApiBearerAuth()
-@Controller("color")
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Roles("admin")
+@Controller("admin/color")
 export class ColorController {
   constructor(private readonly colorService: ColorService) {}
 

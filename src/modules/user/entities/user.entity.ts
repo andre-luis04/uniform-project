@@ -8,10 +8,13 @@ import {
   BeforeInsert,
 } from "typeorm";
 import { IUser } from "../interfaces/user.interface";
-import { CartEntity } from "src/modules/cart/entities/cart.entity";
+
 import { OrderEntity } from "src/modules/order/entities/order.entity";
 import { TimestampedEntity } from "src/shared/entities/timestamp.entity";
 import * as bcrypt from "bcrypt";
+import { CartItemEntity } from "src/modules/cart_item/entities/cart_item.entity";
+import { Roles } from "src/decorators/roles.decorator";
+import { UserRoles } from "src/enums/roles.enum";
 
 @Entity({ name: "user" })
 export class UserEntity extends TimestampedEntity implements IUser {
@@ -26,6 +29,14 @@ export class UserEntity extends TimestampedEntity implements IUser {
 
   @Column({ name: "email" })
   email: string;
+
+  @Column({
+    name: "role",
+    type: "enum",
+    enum: UserRoles,
+    default: UserRoles.USER,
+  })
+  role: UserRoles;
 
   @Column({ name: "password", nullable: false })
   password: string;
@@ -42,6 +53,6 @@ export class UserEntity extends TimestampedEntity implements IUser {
   @OneToMany(() => OrderEntity, (orders) => orders.user)
   orders: OrderEntity[];
 
-  @OneToOne(() => CartEntity, (cart) => cart.user, { cascade: true })
-  cart: CartEntity;
+  @OneToMany(() => CartItemEntity, (cartItem) => cartItem.user)
+  cartItem: CartItemEntity[];
 }

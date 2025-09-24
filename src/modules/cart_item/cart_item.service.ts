@@ -1,19 +1,38 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { CreateCartItemDto } from "./dto/create-cart_item.dto";
 import { UpdateCartItemDto } from "./dto/update-cart_item.dto";
 import { CartItemEntity } from "./entities/cart_item.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { ProductVariantsService } from "../product_variant/variants.service";
 
 @Injectable()
 export class CartItemService {
   constructor(
     @InjectRepository(CartItemEntity)
-    private readonly cartItemRepository: Repository<CartItemEntity>
+    private readonly cartItemRepository: Repository<CartItemEntity>,
+    private readonly productVariantService: ProductVariantsService
   ) {}
 
-  async create(createCartItemDto: CreateCartItemDto): Promise<void> {
-    const cartItem = this.cartItemRepository.create(createCartItemDto);
+  async create(
+    createCartItemDto: CreateCartItemDto,
+    userId: string
+  ): Promise<void> {
+    const cartItem = this.cartItemRepository.create({
+      id_variant: createCartItemDto.id_variant,
+      quantity: createCartItemDto.quantity,
+      id_user: userId,
+    });
+
+    await this.productVariantService.validateStock(
+      createCartItemDto.id_variant,
+      createCartItemDto.quantity
+    );
+
     await this.cartItemRepository.save(cartItem);
   }
 
@@ -21,15 +40,16 @@ export class CartItemService {
     return await this.cartItemRepository.find();
   }
 
-  async findByCart(
-    idCart: string
+  async findByUser(
+    idUser: string
   ): Promise<{ items: CartItemEntity[]; totalCart: Number }> {
     const cartItem = await this.cartItemRepository.find({
-      where: { id_cart: idCart },
+      where: { id_user: idUser },
       relations: {
         productVariant: { color: true, product: true, size: true },
       },
       select: {
+        id: true,
         id_variant: true,
         productVariant: {
           id: true,
@@ -87,8 +107,8 @@ export class CartItemService {
     await this.cartItemRepository.remove(cartItem);
   }
 
-  async removeByCart(id_cart: string): Promise<void> {
-    const cartItem = await this.cartItemRepository.find({ where: { id_cart } });
+  async removeByCart(id_user: string): Promise<void> {
+    const cartItem = await this.cartItemRepository.find({ where: { id_user } });
     await this.cartItemRepository.remove(cartItem);
   }
 }

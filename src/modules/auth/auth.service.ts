@@ -27,7 +27,12 @@ export class AuthService {
       throw new BadRequestException("senha incorreta");
     }
 
-    const payload = { sub: user.id, name: user.name, email: user.email };
+    const payload = {
+      sub: user.id,
+      username: user.name,
+      email: user.email,
+      role: user.role,
+    };
 
     return {
       accessToken: await this.jwtService.signAsync(payload, {

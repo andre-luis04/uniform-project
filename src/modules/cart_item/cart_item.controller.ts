@@ -8,11 +8,14 @@ import {
   Delete,
   Query,
   ParseUUIDPipe,
+  UseGuards,
 } from "@nestjs/common";
 import { CartItemService } from "./cart_item.service";
 import { CreateCartItemDto } from "./dto/create-cart_item.dto";
 import { UpdateCartItemDto } from "./dto/update-cart_item.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { currentUser } from "src/decorators/current.user.decorator";
+import { AuthGuard } from "@nestjs/passport";
 
 @ApiTags("Cart item")
 @ApiBearerAuth()
@@ -20,19 +23,25 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}
 
+  @UseGuards(AuthGuard("jwt"))
   @Post()
-  create(@Body() createCartItemDto: CreateCartItemDto) {
-    return this.cartItemService.create(createCartItemDto);
+  create(
+    @Body() createCartItemDto: CreateCartItemDto,
+    @currentUser() user: any
+  ) {
+    return this.cartItemService.create(createCartItemDto, user.userId);
   }
 
   @Get()
   findAll() {
     return this.cartItemService.findAll();
   }
-  @Get("by-cart/:idCart")
-  findByCart(@Param("idCart", ParseUUIDPipe) idCart: string) {
-    console.log(idCart);
-    return this.cartItemService.findByCart(idCart);
+
+  @UseGuards(AuthGuard("jwt"))
+  @Get("by-current-user")
+  findByUser(@currentUser() user: any) {
+    console.log("CART BY: ", user);
+    return this.cartItemService.findByUser(user.userId);
   }
 
   @Patch(":id")

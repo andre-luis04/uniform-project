@@ -6,16 +6,23 @@ import {
   Patch,
   Param,
   Delete,
+  ParseUUIDPipe,
+  UseGuards,
 } from "@nestjs/common";
 import { ProductVariantsService } from "./variants.service";
 import { CreateProductVariantDto } from "./dto/create-product.variant.dto";
 import { UpdateProductVariantDto } from "./dto/update-product.variant.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { AuthGuard } from "@nestjs/passport";
+import { Roles } from "src/decorators/roles.decorator";
+import { RolesGuard } from "../auth/guards/roles.guard";
 
 @ApiTags("Product variant")
 @ApiBearerAuth()
-@Controller("product-variant")
-export class ProductVariantsController {
+@UseGuards(AuthGuard("jwt"), RolesGuard)
+@Roles("admin")
+@Controller("admin/product-variant")
+export class AdmProductVariantsController {
   constructor(
     private readonly ProductVariantsService: ProductVariantsService
   ) {}
@@ -25,14 +32,13 @@ export class ProductVariantsController {
     return this.ProductVariantsService.create(createProductVariantDto);
   }
 
-  @Get()
-  findAll() {
-    return this.ProductVariantsService.findAll();
-  }
-
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.ProductVariantsService.findOne(id);
+  }
+  @Get()
+  findAll() {
+    return this.ProductVariantsService.findAll();
   }
 
   @Patch(":id")

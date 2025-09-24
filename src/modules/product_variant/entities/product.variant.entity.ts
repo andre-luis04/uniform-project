@@ -35,8 +35,8 @@ export class ProductVariantEntity
   @Column({ name: "id_size", nullable: true })
   id_size?: string;
 
-  @Column({ name: "stock", nullable: true })
-  stock?: number;
+  @Column({ name: "stock", nullable: false })
+  stock: number;
 
   @ManyToOne(() => ProductEntity, (product) => product.productVariant)
   @JoinColumn({ name: "id_product" })

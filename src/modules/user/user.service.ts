@@ -4,23 +4,18 @@ import { UpdateUserDto } from "./dto/update-user.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "./entities/user.entity";
 import { Repository } from "typeorm";
-import { CartEntity } from "../cart/entities/cart.entity";
-import { CartService } from "../cart/cart.service";
 import { ResponseUserDto } from "./dto/user.response.dto";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
-    private cartService: CartService
+    private readonly userRepository: Repository<UserEntity>
   ) {}
   async create(createUserDto: CreateUserDto): Promise<void> {
     const user = this.userRepository.create(createUserDto);
 
     await this.userRepository.save(user);
-
-    await this.cartService.create({ id_user: user.id });
   }
 
   async findAll(): Promise<ResponseUserDto[]> {
@@ -32,6 +27,7 @@ export class UserService {
         name: user.name,
         email: user.email,
         phone: user.phone,
+        role: user.role,
       };
     });
 
