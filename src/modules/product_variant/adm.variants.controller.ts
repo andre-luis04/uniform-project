@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   UseGuards,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { ProductVariantsService } from "./variants.service";
 import { CreateProductVariantDto } from "./dto/create-product.variant.dto";
@@ -16,6 +17,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
 import { Roles } from "src/decorators/roles.decorator";
 import { RolesGuard } from "../auth/guards/roles.guard";
+import { IncreaseStockDto } from "./dto/increase.stock.dto";
 
 @ApiTags("Product variant")
 @ApiBearerAuth()
@@ -39,6 +41,11 @@ export class AdmProductVariantsController {
   @Get()
   findAll() {
     return this.ProductVariantsService.findAll();
+  }
+
+  @Patch("increase-stock/:id")
+  increaseStock(@Param("id") id: string, @Body() quantity: IncreaseStockDto) {
+    return this.ProductVariantsService.increaseStock(id, quantity);
   }
 
   @Patch(":id")

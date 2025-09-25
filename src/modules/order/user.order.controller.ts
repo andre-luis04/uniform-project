@@ -27,7 +27,6 @@ export class UserOrderController {
   @UseGuards(AuthGuard("jwt"))
   @Post("finalize")
   finalizeOrder(@currentUser() user: any): Promise<void> {
-    console.log("FINALIZE ORDER: ", user);
     return this.orderService.finalizeOrder(user.userId);
   }
 

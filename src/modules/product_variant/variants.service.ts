@@ -10,6 +10,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ProductVariantResponseDto } from "./dto/response-product.variant.dto";
 import { OnEvent } from "@nestjs/event-emitter";
+import { IncreaseStockDto } from "./dto/increase.stock.dto";
 
 @Injectable()
 export class ProductVariantsService {
@@ -93,7 +94,7 @@ export class ProductVariantsService {
     }
   }
 
-  async updateStock(idItem: string, quantity: number): Promise<void> {
+  async decreaseStock(idItem: string, quantity: number): Promise<void> {
     console.log(`Atualizando estoque do item ${idItem} em -${quantity}`);
     const productVariant = await this.findOne(idItem);
     const stock = productVariant.stock || 0;
@@ -102,6 +103,20 @@ export class ProductVariantsService {
       throw new BadRequestException("estoque indisponivel");
     }
     const newStock = stock - quantity;
+
+    await this.productVariantsRepository.update(productVariant.id, {
+      stock: newStock,
+    });
+  }
+
+  async increaseStock(
+    idItem: string,
+    quantity: IncreaseStockDto
+  ): Promise<void> {
+    const productVariant = await this.findOne(idItem);
+    const stock = productVariant.stock;
+
+    const newStock = stock + quantity.quantity;
 
     await this.productVariantsRepository.update(productVariant.id, {
       stock: newStock,

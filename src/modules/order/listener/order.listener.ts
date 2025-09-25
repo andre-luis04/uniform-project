@@ -10,7 +10,7 @@ export class OrderListener {
   @OnEvent("order.created")
   async handleOrderCreatedEvent(payload: IOrderListener) {
     payload.items.map((item) =>
-      this.productVariantService.updateStock(item.itemId, item.quantity)
+      this.productVariantService.decreaseStock(item.itemId, item.quantity)
     );
   }
 }
