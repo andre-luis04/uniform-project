@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
@@ -11,23 +12,53 @@ import { Repository } from "typeorm";
 import { ProductVariantResponseDto } from "./dto/response-product.variant.dto";
 import { OnEvent } from "@nestjs/event-emitter";
 import { IncreaseStockDto } from "./dto/increase.stock.dto";
+import { MediaPathConfigService } from "src/configurations/media-path/media-path-config.service";
+import { UploadMediasUseCase } from "../media/media/use-cases/upload-medias.use-case";
+import { RemoveMediasUseCase } from "../media/media/use-cases/remove-medias.use-case";
+import { injectMultipleMedias } from "src/shared/helpers/inject-multiple-medias.helper";
+import { GetMediasDataUseCase } from "../media/media/use-cases/get-medias-data.use-case";
 
 @Injectable()
 export class ProductVariantsService {
   constructor(
     @InjectRepository(ProductVariantEntity)
-    private readonly productVariantsRepository: Repository<ProductVariantEntity>
+    private readonly productVariantsRepository: Repository<ProductVariantEntity>,
+    private readonly uploadMediasUseCase: UploadMediasUseCase,
+    private readonly removeMediasUseCase: RemoveMediasUseCase,
+    private readonly mediaPathConfigService: MediaPathConfigService,
+    private readonly getMediasDataUseCase: GetMediasDataUseCase
   ) {}
   async create(
-    createProductVariantDto: CreateProductVariantDto
+    createProductVariantDto: CreateProductVariantDto,
+    files?: Array<Express.Multer.File>
   ): Promise<void> {
-    const productVariant = this.productVariantsRepository.create(
-      createProductVariantDto
-    );
-    await this.productVariantsRepository.save(productVariant);
+    const mediaIds: string[] = [];
+    try {
+      const productVariant = this.productVariantsRepository.create(
+        createProductVariantDto
+      );
+
+      if (files && files?.length > 0) {
+        const uploadedMediaIds = await this.uploadMediasUseCase.execute(
+          files,
+          this.mediaPathConfigService.productVariantPath
+        );
+
+        mediaIds.push(...uploadedMediaIds);
+        productVariant.ids_media = uploadedMediaIds;
+      }
+
+      await this.productVariantsRepository.save(productVariant);
+    } catch (error) {
+      if (mediaIds.length > 0) {
+        await this.removeMediasUseCase.execute(mediaIds);
+      }
+
+      throw new HttpException(error.message, error.status);
+    }
   }
 
-  async findAllByProduct(productId: string): Promise<ProductVariantEntity[]> {
+  async findAllByProduct(productId: string) {
     const items = await this.productVariantsRepository.find({
       where: { id_product: productId },
       relations: { color: true, product: true, size: true },
@@ -37,10 +68,17 @@ export class ProductVariantsService {
         size: { id: true, size: true },
         product: { id: true, name: true },
         price: true,
+        ids_media: true,
       },
       order: { created_at: { direction: "ASC" } },
     });
-    return items;
+
+    const enrichedData = await injectMultipleMedias(items, async (ids) => {
+      const { medias } = await this.getMediasDataUseCase.execute(ids);
+      return medias;
+    });
+
+    return enrichedData;
   }
 
   async findAll(): Promise<ProductVariantEntity[]> {

@@ -19,4 +19,7 @@ export class CreateProductVariantDto implements Omit<IProductVariants, "id"> {
 
   @ApiProperty({ example: "79.90" })
   price: number;
+
+  @ApiProperty({ example: "10" })
+  stock: number;
 }

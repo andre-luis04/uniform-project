@@ -11,7 +11,7 @@ import {
 import { ProductVariantsService } from "./variants.service";
 import { CreateProductVariantDto } from "./dto/create-product.variant.dto";
 import { UpdateProductVariantDto } from "./dto/update-product.variant.dto";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 @ApiTags("Product variant")
 @ApiBearerAuth()
@@ -22,6 +22,10 @@ export class UserProductVariantsController {
   ) {}
 
   @Get(":productId")
+  @ApiOperation({
+    description:
+      "encontra uma variante pelo produto (ex: quando clica na camisa polo, tras as opçoes de cor e tamanho disponivel)",
+  })
   findAll(@Param("productId", ParseUUIDPipe) productId: string) {
     return this.ProductVariantsService.findAllByProduct(productId);
   }

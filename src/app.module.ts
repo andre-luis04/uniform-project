@@ -21,6 +21,9 @@ import { UserEntity } from "./modules/user/entities/user.entity";
 import { UserModule } from "./modules/user/user.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { EventEmitterModule } from "@nestjs/event-emitter";
+import { MediaPathConfigModule } from "./configurations/media-path/media-path-config.module";
+import { MediaApiModule } from "./modules/media/media/media-api.module";
+import { ConfigModule } from "@nestjs/config";
 
 @Module({
   imports: [
@@ -53,6 +56,8 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
     OrderVariantModule,
     AuthModule,
     EventEmitterModule.forRoot(),
+    MediaPathConfigModule,
+    MediaApiModule,
   ],
   controllers: [],
   providers: [],

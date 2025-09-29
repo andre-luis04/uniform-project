@@ -9,7 +9,7 @@ import { ProductEntity } from "./entities/productEntity";
 export class ProductService {
   constructor(
     @InjectRepository(ProductEntity)
-    private readonly productRepository: Repository<ProductEntity>,
+    private readonly productRepository: Repository<ProductEntity>
   ) {}
 
   async create(createProductDto: CreateProductDto): Promise<void> {
@@ -19,7 +19,17 @@ export class ProductService {
   }
 
   async findAll(): Promise<ProductEntity[]> {
-    return await this.productRepository.find();
+    return await this.productRepository.find({
+      relations: {
+        productVariant: true,
+      },
+      select: {
+        productVariant: {
+          id: true,
+          ids_media: true,
+        },
+      },
+    });
   }
 
   async findOne(id: string): Promise<ProductEntity> {

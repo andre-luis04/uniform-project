@@ -38,6 +38,9 @@ export class ProductVariantEntity
   @Column({ name: "stock", nullable: false })
   stock: number;
 
+  @Column({ type: "bigint", name: "ids_media", nullable: true, array: true })
+  ids_media: string[];
+
   @ManyToOne(() => ProductEntity, (product) => product.productVariant)
   @JoinColumn({ name: "id_product" })
   product: ProductEntity;
