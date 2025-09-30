@@ -12,6 +12,8 @@ import { UserEntity } from "../user/entities/user.entity";
 import { CartItemService } from "../cart_item/cart_item.service";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { ProductVariantsService } from "../product_variant/variants.service";
+import { OrderStatus } from "src/enums/status.enum";
+import { IsStatus } from "./functions/isStatus";
 
 @Injectable()
 export class OrderService {
@@ -111,6 +113,9 @@ export class OrderService {
 
   async update(id: string, updateOrderDto: UpdateOrderDto): Promise<void> {
     const order = await this.findOne(id);
+    if (!IsStatus(updateOrderDto.status)) {
+      throw new BadRequestException("status invalido");
+    }
     await this.orderRepository.update(order.id, updateOrderDto);
   }
 
