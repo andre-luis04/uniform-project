@@ -6,5 +6,5 @@ export class CreateOrderDto implements Omit<IOrder, "id" | "created_at"> {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  id_user: string;
+  id_user!: string;
 }

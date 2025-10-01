@@ -6,5 +6,5 @@ export class CreateSizeDto implements Omit<IsizeEntity, "id"> {
   @ApiProperty({ example: "P" })
   @IsNotEmpty()
   @IsString()
-  size: string;
+  size!: string;
 }

@@ -8,9 +8,9 @@ export class CreateCartItemDto
   @ApiProperty({ example: "2" })
   @IsNotEmpty()
   @IsNumber()
-  quantity: number;
+  quantity!: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  id_variant: string;
+  id_variant!: string;
 }

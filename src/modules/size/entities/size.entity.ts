@@ -6,13 +6,13 @@ import { TimestampedEntity } from "src/shared/entities/timestamp.entity";
 @Entity({ name: "size" })
 export class SizeEntity extends TimestampedEntity implements IsizeEntity {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
   @Column({ name: "size" })
-  size: string;
+  size!: string;
 
   @OneToMany(
     () => ProductVariantEntity,
     (productVariant) => productVariant.size
   )
-  productVariant: ProductVariantEntity[];
+  productVariant!: ProductVariantEntity[];
 }

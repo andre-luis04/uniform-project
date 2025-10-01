@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
@@ -49,12 +50,16 @@ export class ProductVariantsService {
       }
 
       await this.productVariantsRepository.save(productVariant);
-    } catch (error) {
+    } catch (error: unknown) {
       if (mediaIds.length > 0) {
         await this.removeMediasUseCase.execute(mediaIds);
       }
 
-      throw new HttpException(error.message, error.status);
+      if (error instanceof Error)
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
   }
 

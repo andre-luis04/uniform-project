@@ -16,25 +16,25 @@ import { UserEntity } from "src/modules/user/entities/user.entity";
 @Entity({ name: "cart_item" })
 export class CartItemEntity extends TimestampedEntity implements ICartItem {
   @PrimaryGeneratedColumn("uuid", { name: "id" })
-  id: string;
+  id!: string;
 
   @Column({ name: "quantity", type: "integer" })
-  quantity: number;
+  quantity!: number;
 
   @Column({ name: "id_user", type: "uuid" })
-  id_user: string;
+  id_user!: string;
 
   @Column({ name: "id_product_variant", type: "uuid" })
-  id_variant: string;
+  id_variant!: string;
 
   @OneToOne(
     () => ProductVariantEntity,
     (productVariant) => productVariant.cartItem
   )
   @JoinColumn({ name: "id_product_variant" })
-  productVariant: ProductVariantEntity;
+  productVariant!: ProductVariantEntity;
 
   @ManyToOne(() => UserEntity, (user) => user.cartItem)
   @JoinColumn({ name: "id_user" })
-  user: UserEntity;
+  user!: UserEntity;
 }

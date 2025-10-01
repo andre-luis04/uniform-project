@@ -6,13 +6,13 @@ import { TimestampedEntity } from "src/shared/entities/timestamp.entity";
 @Entity({ name: "color" })
 export class ColorEntity extends TimestampedEntity implements IcolorEntity {
   @PrimaryGeneratedColumn("uuid", { name: "id" })
-  id: string;
+  id!: string;
   @Column({ name: "color" })
-  color: string;
+  color!: string;
 
   @OneToMany(
     () => ProductVariantEntity,
     (productVariant) => productVariant.color
   )
-  productVariant: ProductVariantEntity[];
+  productVariant!: ProductVariantEntity[];
 }

@@ -27,6 +27,7 @@ export class ProductService {
         productVariant: {
           id: true,
           ids_media: true,
+          price: true,
         },
       },
     });

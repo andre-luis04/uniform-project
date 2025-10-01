@@ -6,20 +6,20 @@ export class ResponseUserDto implements Omit<IUser, "password"> {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  id: string;
+  id!: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  name: string;
+  name!: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  phone: string;
+  phone!: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsEmail()
-  email: string;
+  email!: string;
 }

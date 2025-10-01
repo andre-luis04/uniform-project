@@ -6,17 +6,17 @@ import { TimestampedEntity } from "src/shared/entities/timestamp.entity";
 @Entity({ name: "product" })
 export class ProductEntity extends TimestampedEntity implements IProductEntity {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column({ name: "name" })
-  name: string;
+  name!: string;
 
   @Column({ name: "description" })
-  description: string;
+  description!: string;
 
   @OneToMany(
     () => ProductVariantEntity,
     (productVariant) => productVariant.product
   )
-  productVariant: ProductVariantEntity;
+  productVariant!: ProductVariantEntity;
 }

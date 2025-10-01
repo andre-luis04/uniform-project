@@ -32,7 +32,7 @@ export class GetMediasDataUseCase {
       }));
 
       return { medias: enrichedMedias };
-    } catch (error) {
+    } catch (error: any) {
       throw new HttpException(
         error.response?.data?.message || "Erro ao buscar mídias.",
         error.response?.data?.status || 500

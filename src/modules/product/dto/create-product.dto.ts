@@ -6,10 +6,10 @@ export class CreateProductDto implements Omit<IProductEntity, "id"> {
   @ApiProperty({ example: "Camisa Polo" })
   @IsNotEmpty()
   @IsString()
-  name: string;
+  name!: string;
 
   @ApiProperty({ example: "100% algodão" })
   @IsNotEmpty()
   @IsString()
-  description: string;
+  description!: string;
 }

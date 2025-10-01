@@ -21,44 +21,44 @@ export class ProductVariantEntity
   implements IProductVariants
 {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column({ name: "id_product" })
-  id_product: string;
+  id_product!: string;
 
   @Column({ name: "id_color" })
-  id_color: string;
+  id_color!: string;
 
   @Column({ name: "price", type: "decimal" })
-  price: number;
+  price!: number;
 
   @Column({ name: "id_size", nullable: true })
   id_size?: string;
 
   @Column({ name: "stock", nullable: false })
-  stock: number;
+  stock!: number;
 
   @Column({ type: "bigint", name: "ids_media", nullable: true, array: true })
-  ids_media: string[];
+  ids_media!: string[];
 
   @ManyToOne(() => ProductEntity, (product) => product.productVariant)
   @JoinColumn({ name: "id_product" })
-  product: ProductEntity;
+  product!: ProductEntity;
 
   @ManyToOne(() => SizeEntity, (size) => size.productVariant)
   @JoinColumn({ name: "id_size" })
-  size: SizeEntity;
+  size!: SizeEntity;
 
   @ManyToOne(() => ColorEntity, (color) => color.productVariant)
   @JoinColumn({ name: "id_color" })
-  color: ColorEntity;
+  color!: ColorEntity;
 
   @OneToMany(
     () => OrderVariantEntity,
     (orderVariant) => orderVariant.productVariant
   )
-  orderVariant: OrderVariantEntity;
+  orderVariant!: OrderVariantEntity;
 
   @OneToOne(() => CartItemEntity, (cartItem) => cartItem.productVariant)
-  cartItem: CartItemEntity;
+  cartItem!: CartItemEntity;
 }

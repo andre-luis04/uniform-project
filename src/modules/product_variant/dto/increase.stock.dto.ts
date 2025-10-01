@@ -5,5 +5,5 @@ export class IncreaseStockDto {
   @ApiProperty({ example: "2" })
   @IsInt()
   @Min(1)
-  quantity: number;
+  quantity!: number;
 }

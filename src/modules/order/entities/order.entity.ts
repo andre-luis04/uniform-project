@@ -15,10 +15,10 @@ import { OrderStatus } from "src/enums/status.enum";
 @Entity({ name: "order" })
 export class OrderEntity extends TimestampedEntity implements IOrder {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column({ name: "id_user" })
-  id_user: string;
+  id_user!: string;
 
   @Column({
     name: "status",
@@ -26,14 +26,14 @@ export class OrderEntity extends TimestampedEntity implements IOrder {
     enum: OrderStatus,
     default: OrderStatus.PENDENTE,
   })
-  status: OrderStatus;
+  status!: OrderStatus;
 
   @ManyToOne(() => UserEntity, (user) => user.orders)
   @JoinColumn({ name: "id_user" })
-  user: UserEntity;
+  user!: UserEntity;
 
   @OneToMany(() => OrderVariantEntity, (orderVariant) => orderVariant.order, {
     cascade: true,
   })
-  orderVariant: OrderVariantEntity[];
+  orderVariant!: OrderVariantEntity[];
 }

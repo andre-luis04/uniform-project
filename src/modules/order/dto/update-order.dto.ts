@@ -4,5 +4,5 @@ import { OrderStatus } from "src/enums/status.enum";
 
 export class UpdateOrderDto implements Omit<CreateOrderDto, "id_user"> {
   @ApiProperty({ example: "cancelado | pendente | retirar | concluido" })
-  status: OrderStatus;
+  status!: OrderStatus;
 }

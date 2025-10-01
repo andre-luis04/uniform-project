@@ -6,5 +6,5 @@ export class CreateColorDto implements Omit<IcolorEntity, "id"> {
   @ApiProperty({ example: "Azul" })
   @IsString()
   @IsNotEmpty()
-  color: string;
+  color!: string;
 }

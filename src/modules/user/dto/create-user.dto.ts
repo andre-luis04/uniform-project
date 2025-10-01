@@ -6,19 +6,19 @@ export class CreateUserDto implements Omit<IUser, "id"> {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  name: string;
+  name!: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  phone: string;
+  phone!: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsEmail({ require_tld: true })
-  email: string;
+  email!: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  password: string;
+  password!: string;
 }

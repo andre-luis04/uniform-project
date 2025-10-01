@@ -6,10 +6,10 @@ export class CreateOrderVariantDto implements Omit<IOrderVariant, "id"> {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  id_order: string;
+  id_order!: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  id_product_variant: string;
+  id_product_variant!: string;
 }

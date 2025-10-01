@@ -19,16 +19,16 @@ import { UserRoles } from "src/enums/roles.enum";
 @Entity({ name: "user" })
 export class UserEntity extends TimestampedEntity implements IUser {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column({ name: "user-name" })
-  name: string;
+  name!: string;
 
   @Column({ name: "phone" })
-  phone: string;
+  phone!: string;
 
   @Column({ name: "email" })
-  email: string;
+  email!: string;
 
   @Column({
     name: "role",
@@ -36,10 +36,10 @@ export class UserEntity extends TimestampedEntity implements IUser {
     enum: UserRoles,
     default: UserRoles.USER,
   })
-  role: UserRoles;
+  role!: UserRoles;
 
   @Column({ name: "password", nullable: false })
-  password: string;
+  password!: string;
 
   @BeforeInsert()
   async hashPassword() {
@@ -51,8 +51,8 @@ export class UserEntity extends TimestampedEntity implements IUser {
   deleted_at?: Date;
 
   @OneToMany(() => OrderEntity, (orders) => orders.user)
-  orders: OrderEntity[];
+  orders!: OrderEntity[];
 
   @OneToMany(() => CartItemEntity, (cartItem) => cartItem.user)
-  cartItem: CartItemEntity[];
+  cartItem!: CartItemEntity[];
 }

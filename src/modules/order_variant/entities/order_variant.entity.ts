@@ -16,27 +16,27 @@ export class OrderVariantEntity
   implements IOrderVariant
 {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column({ name: "id_product_variant" })
-  id_product_variant: string;
+  id_product_variant!: string;
 
   @Column({ name: "id_order" })
-  id_order: string;
+  id_order!: string;
 
   @Column({ name: "quantity" })
-  quantity: number;
+  quantity!: number;
 
   @ManyToOne(() => OrderEntity, (order) => order.orderVariant, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "id_order" })
-  order: OrderEntity;
+  order!: OrderEntity;
 
   @ManyToOne(
     () => ProductVariantEntity,
     (productVariant) => productVariant.orderVariant
   )
   @JoinColumn({ name: "id_product_variant" })
-  productVariant: ProductVariantEntity;
+  productVariant!: ProductVariantEntity;
 }
