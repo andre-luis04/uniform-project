@@ -33,6 +33,7 @@ import { ConfigModule } from "@nestjs/config";
       host: db_host,
       username: db_user,
       password: db_password,
+      port: 5432,
       entities: [
         UserEntity,
         OrderEntity,

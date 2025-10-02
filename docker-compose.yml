@@ -1,32 +1,68 @@
-version: "3.8"
-
 services:
-  app:
-    build: .
-    ports:
-      - "3000:3000"
-    depends_on:
-      - db
-    environment:
-      DATABASE_HOST: db
-      DATABASE_PORT: 5432
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: exemplo123
-      DATABASE_NAME: meu_banco
-    volumes:
-      - .:/app
-    command: npm run start:dev
-
   db:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: exemplo123
-      POSTGRES_DB: meu_banco
+    image: postgres:11-alpine
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    container_name: "db"
+    restart: "always"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
       - postgres-data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@teste.com"
+      PGADMIN_DEFAULT_PASSWORD: "Admin123"
+    ports:
+      - "8085:80"
+    restart: always
+    depends_on:
+      pgsql:
+        condition: service_healthy
+
+  app:
+    container_name: uniform-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "npm run start:dev"
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    develop:
+      watch:
+        - action: sync
+          path: ./app
+          target: /app
+          ignore:
+            - node_modules/
+
+        - action: rebuild
+          path: package.json
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_SCHEMA: ${DB_SCHEMA}
+      DB_SYNC: ${DB_SYNC}
 
 volumes:
   postgres-data:

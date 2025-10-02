@@ -9,7 +9,7 @@ import { CartItemEntity } from "./entities/cart_item.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ProductVariantsService } from "../product_variant/variants.service";
-import { DataSource } from "typeorm/browser";
+import { DataSource } from "typeorm";
 
 @Injectable()
 export class CartItemService {
