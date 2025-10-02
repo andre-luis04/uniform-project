@@ -9,31 +9,44 @@ import { CartItemEntity } from "./entities/cart_item.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ProductVariantsService } from "../product_variant/variants.service";
+import { DataSource } from "typeorm/browser";
 
 @Injectable()
 export class CartItemService {
   constructor(
     @InjectRepository(CartItemEntity)
     private readonly cartItemRepository: Repository<CartItemEntity>,
-    private readonly productVariantService: ProductVariantsService
+    private readonly productVariantService: ProductVariantsService,
+    private dataSource: DataSource
   ) {}
 
   async create(
     createCartItemDto: CreateCartItemDto,
     userId: string
   ): Promise<void> {
-    const cartItem = this.cartItemRepository.create({
-      id_variant: createCartItemDto.id_variant,
-      quantity: createCartItemDto.quantity,
-      id_user: userId,
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    await this.productVariantService.validateStock(
-      createCartItemDto.id_variant,
-      createCartItemDto.quantity
-    );
+    queryRunner.connect();
+    queryRunner.startTransaction();
+    try {
+      const cartItem = this.cartItemRepository.create({
+        id_variant: createCartItemDto.id_variant,
+        quantity: createCartItemDto.quantity,
+        id_user: userId,
+      });
 
-    await this.cartItemRepository.save(cartItem);
+      await this.productVariantService.validateStock(
+        createCartItemDto.id_variant,
+        createCartItemDto.quantity
+      );
+
+      await this.cartItemRepository.save(cartItem);
+      queryRunner.commitTransaction();
+    } catch (err) {
+      queryRunner.rollbackTransaction();
+    } finally {
+      queryRunner.release();
+    }
   }
 
   async findAll(): Promise<CartItemEntity[]> {

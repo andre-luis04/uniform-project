@@ -37,15 +37,17 @@ export class AuthService {
 
     const accessToken = this.jwtService.signAsync(
       { ...payload, type: "access" },
-      { expiresIn: "60s" }
+      { expiresIn: "1h" }
     );
     const refreshToken = this.jwtService.signAsync(
       { ...payload, type: "refresh" },
-      { expiresIn: "1h" }
+      { expiresIn: "7d" }
     );
 
     return {
-      accessToken: await this.jwtService.signAsync(payload, { expiresIn: 60 }),
+      accessToken: await this.jwtService.signAsync(payload, {
+        expiresIn: "1h",
+      }),
       refreshToken: await this.jwtService.signAsync(payload, {
         expiresIn: "7d",
       }),
@@ -74,7 +76,7 @@ export class AuthService {
 
       return {
         accessToken: await this.jwtService.signAsync(newPayload, {
-          expiresIn: 60,
+          expiresIn: 3600,
         }),
         refreshToken: await this.jwtService.signAsync(newPayload, {
           expiresIn: "7d",

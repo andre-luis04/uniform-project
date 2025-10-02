@@ -14,6 +14,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { ProductVariantsService } from "../product_variant/variants.service";
 import { OrderStatus } from "src/enums/status.enum";
 import { IsStatus } from "./functions/isStatus";
+import { DataSource } from "typeorm";
 
 @Injectable()
 export class OrderService {
@@ -24,7 +25,8 @@ export class OrderService {
     private readonly userRepository: Repository<UserEntity>,
     private cartItemService: CartItemService,
     private eventEmitter: EventEmitter2,
-    private readonly productVariantService: ProductVariantsService
+    private readonly productVariantService: ProductVariantsService,
+    private dataSource: DataSource
   ) {}
 
   async findAll(): Promise<OrderEntity[]> {
@@ -62,7 +64,7 @@ export class OrderService {
       },
     });
     if (!order) {
-      throw new NotFoundException("pedido não enconttrado");
+      throw new NotFoundException("pedido não encontrado");
     }
     return order;
   }
@@ -112,11 +114,22 @@ export class OrderService {
   }
 
   async update(id: string, updateOrderDto: UpdateOrderDto): Promise<void> {
-    const order = await this.findOne(id);
-    if (!IsStatus(updateOrderDto.status)) {
-      throw new BadRequestException("status invalido");
+    const queryRunner = this.dataSource.createQueryRunner();
+    queryRunner.connect();
+
+    queryRunner.startTransaction();
+    try {
+      const order = await this.findOne(id);
+      if (!IsStatus(updateOrderDto.status)) {
+        throw new BadRequestException("status invalido");
+      }
+      await this.orderRepository.update(order.id, updateOrderDto);
+      queryRunner.commitTransaction();
+    } catch (err) {
+      queryRunner.rollbackTransaction();
+    } finally {
+      queryRunner.release;
     }
-    await this.orderRepository.update(order.id, updateOrderDto);
   }
 
   async remove(id: string): Promise<void> {
@@ -125,38 +138,52 @@ export class OrderService {
   }
 
   async finalizeOrder(userId: string): Promise<void> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: {
-        cartItem: true,
-      },
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    if (!user || user.cartItem.length === 0) {
-      throw new BadRequestException("carrinho vazio ou usuario inexistente");
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id: userId },
+        relations: {
+          cartItem: true,
+        },
+      });
+
+      if (!user || user.cartItem.length === 0) {
+        throw new BadRequestException("carrinho vazio ou usuario inexistente");
+      }
+
+      const order = this.orderRepository.create({
+        user: user,
+        orderVariant: user.cartItem.map((item) => ({
+          id_product_variant: item.id_variant,
+          quantity: item.quantity,
+        })),
+      });
+
+      await Promise.all(
+        user.cartItem.map((item) =>
+          this.productVariantService.validateStock(
+            item.id_variant,
+            item.quantity
+          )
+        )
+      );
+      await this.orderRepository.save(order);
+      await this.cartItemService.removeByCart(user.id);
+
+      this.eventEmitter.emit("order.created", {
+        items: order.orderVariant.map((item) => ({
+          itemId: item.id_product_variant,
+          quantity: item.quantity,
+        })),
+      });
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
     }
-
-    const order = this.orderRepository.create({
-      user: user,
-      orderVariant: user.cartItem.map((item) => ({
-        id_product_variant: item.id_variant,
-        quantity: item.quantity,
-      })),
-    });
-
-    await Promise.all(
-      user.cartItem.map((item) =>
-        this.productVariantService.validateStock(item.id_variant, item.quantity)
-      )
-    );
-    await this.orderRepository.save(order);
-    await this.cartItemService.removeByCart(user.id);
-
-    this.eventEmitter.emit("order.created", {
-      items: order.orderVariant.map((item) => ({
-        itemId: item.id_product_variant,
-        quantity: item.quantity,
-      })),
-    });
   }
 }

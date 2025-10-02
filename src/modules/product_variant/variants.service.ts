@@ -18,6 +18,7 @@ import { UploadMediasUseCase } from "../media/media/use-cases/upload-medias.use-
 import { RemoveMediasUseCase } from "../media/media/use-cases/remove-medias.use-case";
 import { injectMultipleMedias } from "src/shared/helpers/inject-multiple-medias.helper";
 import { GetMediasDataUseCase } from "../media/media/use-cases/get-medias-data.use-case";
+import { DataSource } from "typeorm";
 
 @Injectable()
 export class ProductVariantsService {
@@ -27,7 +28,8 @@ export class ProductVariantsService {
     private readonly uploadMediasUseCase: UploadMediasUseCase,
     private readonly removeMediasUseCase: RemoveMediasUseCase,
     private readonly mediaPathConfigService: MediaPathConfigService,
-    private readonly getMediasDataUseCase: GetMediasDataUseCase
+    private readonly getMediasDataUseCase: GetMediasDataUseCase,
+    private dataSource: DataSource
   ) {}
   async create(
     createProductVariantDto: CreateProductVariantDto,
@@ -138,18 +140,29 @@ export class ProductVariantsService {
   }
 
   async decreaseStock(idItem: string, quantity: number): Promise<void> {
-    console.log(`Atualizando estoque do item ${idItem} em -${quantity}`);
-    const productVariant = await this.findOne(idItem);
-    const stock = productVariant.stock || 0;
+    const queryRunner = this.dataSource.createQueryRunner();
+    queryRunner.connect();
 
-    if (quantity > stock) {
-      throw new BadRequestException("estoque indisponivel");
+    queryRunner.startTransaction();
+    try {
+      console.log(`Atualizando estoque do item ${idItem} em -${quantity}`);
+      const productVariant = await this.findOne(idItem);
+      const stock = productVariant.stock || 0;
+
+      if (quantity > stock) {
+        throw new BadRequestException("estoque indisponivel");
+      }
+      const newStock = stock - quantity;
+
+      await this.productVariantsRepository.update(productVariant.id, {
+        stock: newStock,
+      });
+      queryRunner.commitTransaction();
+    } catch (err) {
+      queryRunner.rollbackTransaction();
+    } finally {
+      queryRunner.release();
     }
-    const newStock = stock - quantity;
-
-    await this.productVariantsRepository.update(productVariant.id, {
-      stock: newStock,
-    });
   }
 
   async increaseStock(

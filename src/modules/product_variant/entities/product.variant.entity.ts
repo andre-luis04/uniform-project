@@ -47,7 +47,7 @@ export class ProductVariantEntity
 
   @ManyToOne(() => SizeEntity, (size) => size.productVariant)
   @JoinColumn({ name: "id_size" })
-  size!: SizeEntity;
+  size!: SizeEntity[];
 
   @ManyToOne(() => ColorEntity, (color) => color.productVariant)
   @JoinColumn({ name: "id_color" })
