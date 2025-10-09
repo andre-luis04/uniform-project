@@ -1,10 +1,10 @@
 services:
-  db:
+  pgsql:
     image: postgres:11-alpine
     ports:
       - "5433:5432"
-    container_name: "db"
-    restart: "always"
+    container_name: "pgsql"
+    restart: always
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -14,8 +14,15 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer:latest
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      pgsql:
+        condition: service_healthy
 
   pgadmin:
     image: dpage/pgadmin4
@@ -29,8 +36,15 @@ services:
       pgsql:
         condition: service_healthy
 
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    restart: always
+
   app:
-    container_name: uniform-backend
+    container_name: "uniform-backend"
     build:
       context: .
       dockerfile: Dockerfile
@@ -44,16 +58,18 @@ services:
       - /app/node_modules
     develop:
       watch:
+        # Sync changes in the Next.js app directory for live reloading
         - action: sync
-          path: ./app
-          target: /app
+          path: ./app # Path to watch for changes (local directory)
+          target: /app # Target path in the container where changes are synced
           ignore:
-            - node_modules/
+            - node_modules/ # Exclude node_modules/ from syncing to avoid performance issues
 
+        # Rebuild the service when package.json changes (e.g., after adding new dependencies)
         - action: rebuild
-          path: package.json
+          path: package.json # Path to watch for triggering rebuilds
     depends_on:
-      db:
+      pgsql:
         condition: service_healthy
     environment:
       DB_HOST: ${DB_HOST}
@@ -63,6 +79,3 @@ services:
       DB_DATABASE: ${DB_DATABASE}
       DB_SCHEMA: ${DB_SCHEMA}
       DB_SYNC: ${DB_SYNC}
-
-volumes:
-  postgres-data:

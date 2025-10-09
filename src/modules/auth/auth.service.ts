@@ -35,22 +35,20 @@ export class AuthService {
       role: user.role,
     };
 
-    const accessToken = this.jwtService.signAsync(
-      { ...payload, type: "access" },
-      { expiresIn: "1h" }
-    );
-    const refreshToken = this.jwtService.signAsync(
-      { ...payload, type: "refresh" },
-      { expiresIn: "7d" }
-    );
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(
+        { ...payload, type: "access" },
+        { expiresIn: "1h" }
+      ),
+      this.jwtService.signAsync(
+        { ...payload, type: "refresh" },
+        { expiresIn: "7d" }
+      ),
+    ]);
 
     return {
-      accessToken: await this.jwtService.signAsync(payload, {
-        expiresIn: "1h",
-      }),
-      refreshToken: await this.jwtService.signAsync(payload, {
-        expiresIn: "7d",
-      }),
+      accessToken,
+      refreshToken,
     };
   }
 

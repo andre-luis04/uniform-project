@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { db_database, db_password } from "./constants";
+import { db_database, db_password, db_port } from "./constants";
 import { db_user } from "./constants";
 import { db_host } from "./constants";
 import { ProductModule } from "./modules/product/product.module";
@@ -33,7 +33,7 @@ import { ConfigModule } from "@nestjs/config";
       host: db_host,
       username: db_user,
       password: db_password,
-      port: 5432,
+      port: Number(db_port),
       entities: [
         UserEntity,
         OrderEntity,

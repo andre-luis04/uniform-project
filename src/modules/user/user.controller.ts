@@ -11,15 +11,18 @@ import {
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
 import { Roles } from "src/decorators/roles.decorator";
 import { RolesGuard } from "../auth/guards/roles.guard";
 
 @ApiTags("User")
 @ApiBearerAuth()
-@UseGuards(AuthGuard("jwt"), RolesGuard)
-@Roles("admin")
 @Controller("admin/user")
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -34,21 +37,76 @@ export class UserController {
   }
 
   @Get()
-  @ApiOperation({ description: "encontra todos os usuarios cadastrados" })
+  @ApiResponse({
+    status: 200,
+    description: "Lista de usuários retornada com sucesso",
+    content: {
+      "application/json": {
+        example: [
+          {
+            id: "uuid",
+            name: "João Silva",
+            email: "joao@email",
+            phone: "3522-0000",
+          },
+          {
+            id: "uuid",
+            name: "Maria Souza",
+            email: "maria@email",
+            phone: "4533-0000",
+          },
+        ],
+      },
+    },
+  })
   findAll() {
     return this.userService.findAll();
   }
 
   @Get("with-deleted-user")
-  @ApiOperation({
-    description: "encontra todos os usuarios, inclusive quem foi excluido",
+  @ApiResponse({
+    status: 200,
+    description: "Lista de usuários retornada com sucesso",
+    content: {
+      "application/json": {
+        example: [
+          {
+            id: "uuid",
+            name: "João Silva",
+            email: "joao@email",
+            phone: "3522-0000",
+          },
+          {
+            id: "uuid",
+            name: "Maria Souza",
+            email: "maria@email",
+            phone: "4533-0000",
+          },
+        ],
+      },
+    },
   })
   async findAllDeletedUser() {
     return await this.userService.findAllDeletedUser();
   }
 
   @Get(":id")
-  @ApiOperation({ description: "encontra o usuario pelo seu id" })
+  @ApiResponse({
+    status: 200,
+    description: "usuário retornado com sucesso",
+    content: {
+      "application/json": {
+        example: [
+          {
+            id: "uuid",
+            name: "João Silva",
+            email: "joao@email",
+            phone: "3522-0000",
+          },
+        ],
+      },
+    },
+  })
   findOne(@Param("id") id: string) {
     return this.userService.findOne(id);
   }

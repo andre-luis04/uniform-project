@@ -7,6 +7,7 @@ import {
   Res,
   Req,
   UnauthorizedException,
+  HttpException,
 } from "@nestjs/common";
 import { type Response } from "express";
 import { type Request } from "express";
@@ -14,6 +15,7 @@ import { AuthService } from "./auth.service";
 import { SignInDto } from "./dto/signIn.dto";
 import { Public } from "src/decorators/public.decorator";
 import { ApiOperation } from "@nestjs/swagger";
+import { HttpStatusCode } from "axios";
 
 @Controller("auth")
 export class AuthController {
@@ -22,54 +24,38 @@ export class AuthController {
   @Public()
   @Post("login")
   @ApiOperation({ description: "rota para fazer login no sistema" })
-  async signIn(
-    @Body() signInDto: SignInDto,
-    @Res({ passthrough: true }) res: Response
-  ) {
+  async signIn(@Body() signInDto: SignInDto) {
     const { accessToken, refreshToken } = await this.authService.signIn(
       signInDto.email,
       signInDto.password
     );
 
-    res.cookie("refresh_token", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
     return { accessToken, refreshToken };
   }
 
   @Public()
   @Post("refresh")
-  async refreshToken(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response
-  ) {
-    const cookieToken = req.cookies?.["refresh_token"];
+  async refreshToken(@Req() req: Request) {
+    const cookieToken = req.cookies["refreshToken"];
     const refreshToken = cookieToken;
 
     if (!refreshToken) {
+      console.log("eu odeio minha vida");
       throw new UnauthorizedException("refresh token não encontrado");
     }
 
-    const { accessToken, refreshToken: newRefreshToken } =
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
       await this.authService.refreshToken(refreshToken);
 
-    res.cookie("refresh_token", newRefreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    return { accessToken };
+    return { newAccessToken, newRefreshToken };
   }
 
   @Public()
   @Post("logout")
-  logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie("refresh_token");
-    return { message: "Logged out" };
+  logout() {
+    throw new HttpException(
+      "metodo nao implementado",
+      HttpStatusCode.NotImplemented
+    );
   }
 }
