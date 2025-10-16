@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   UseGuards,
+  HttpCode,
 } from "@nestjs/common";
 import { OrderService } from "./order.service";
 import { CreateOrderDto } from "./dto/create-order.dto";
@@ -124,12 +125,14 @@ export class AdmOrderController {
     return this.orderService.findOne(id);
   }
 
+  @HttpCode(204)
   @Patch(":id")
   @ApiOperation({ description: "altera um pedido" })
   update(@Param("id") id: string, @Body() updateOrderDto: UpdateOrderDto) {
     return this.orderService.update(id, updateOrderDto);
   }
 
+  @HttpCode(204)
   @Delete(":id")
   @ApiOperation({ description: "exclui um pedido" })
   remove(@Param("id") id: string) {

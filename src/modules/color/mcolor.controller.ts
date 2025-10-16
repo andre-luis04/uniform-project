@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpCode,
 } from "@nestjs/common";
 import { ColorService } from "./mcolor.service";
 import { CreateColorDto } from "./dto/create-color.dto";
@@ -24,6 +25,7 @@ import { RolesGuard } from "../auth/guards/roles.guard";
 export class ColorController {
   constructor(private readonly colorService: ColorService) {}
 
+  @HttpCode(204)
   @Post()
   @ApiOperation({ description: "cria uma cor" })
   create(@Body() createColorDto: CreateColorDto) {
@@ -80,12 +82,14 @@ export class ColorController {
     return this.colorService.findOne(id);
   }
 
+  @HttpCode(204)
   @Patch(":id")
   @ApiOperation({ description: "altera uma cor" })
   update(@Param("id") id: string, @Body() updateMcolorDto: UpdateColorDto) {
     return this.colorService.update(id, updateMcolorDto);
   }
 
+  @HttpCode(204)
   @Delete(":id")
   @ApiOperation({ description: "exclui uma cor" })
   remove(@Param("id") id: string) {

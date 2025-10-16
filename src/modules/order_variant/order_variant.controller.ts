@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpCode,
 } from "@nestjs/common";
 import { OrderVariantService } from "./order_variant.service";
 import { CreateOrderVariantDto } from "./dto/create-order_variant.dto";
@@ -37,6 +38,7 @@ export class OrderVariantController {
     return this.orderVariantService.findOne(id);
   }
 
+  @HttpCode(204)
   @Patch(":id")
   @ApiOperation({ description: "altera uma ou mais propriedades do pedido com produto" })
   update(
@@ -46,6 +48,7 @@ export class OrderVariantController {
     return this.orderVariantService.update(id, updateOrderVariantDto);
   }
 
+  @HttpCode(204)
   @Delete(":id")
   @ApiOperation({ description: "deleta um pedido com produto" })
   remove(@Param("id") id: string) {

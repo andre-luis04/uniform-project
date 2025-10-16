@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpCode,
 } from "@nestjs/common";
 import { SizeService } from "./size.service";
 import { CreateSizeDto } from "./dto/create-size.dto";
@@ -29,6 +30,7 @@ import { RolesGuard } from "../auth/guards/roles.guard";
 export class SizeController {
   constructor(private readonly sizeService: SizeService) {}
 
+  @HttpCode(204)
   @Post()
   @ApiOperation({ description: "cria um tamanho" })
   create(@Body() createSizeDto: CreateSizeDto) {
@@ -85,12 +87,14 @@ export class SizeController {
     return this.sizeService.findOne(id);
   }
 
+  @HttpCode(204)
   @Patch(":id")
   @ApiOperation({ description: "altera um tamanho" })
   update(@Param("id") id: string, @Body() updateSizeDto: UpdateSizeDto) {
     return this.sizeService.update(id, updateSizeDto);
   }
 
+  @HttpCode(204)
   @Delete(":id")
   @ApiOperation({ description: "exclui um tamanho" })
   remove(@Param("id") id: string) {

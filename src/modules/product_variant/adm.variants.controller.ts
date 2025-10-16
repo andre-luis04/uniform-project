@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFiles,
+  HttpCode,
 } from "@nestjs/common";
 import { ProductVariantsService } from "./variants.service";
 import { CreateProductVariantDto } from "./dto/create-product.variant.dto";
@@ -37,6 +38,7 @@ export class AdmProductVariantsController {
     private readonly ProductVariantsService: ProductVariantsService
   ) {}
 
+  @HttpCode(204)
   @Post()
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ description: "cria uma variação de produto" })
@@ -167,6 +169,7 @@ export class AdmProductVariantsController {
     return this.ProductVariantsService.findAll();
   }
 
+  @HttpCode(204)
   @Patch("increase-stock/:id")
   @ApiConsumes("multipart/form-data")
   @ApiOperation({
@@ -186,6 +189,7 @@ export class AdmProductVariantsController {
     return this.ProductVariantsService.increaseStock(id, quantity);
   }
 
+  @HttpCode(204)
   @Patch(":id")
   @ApiOperation({
     description: "altera uma ou mais propriedades de uma variante",
@@ -197,6 +201,7 @@ export class AdmProductVariantsController {
     return this.ProductVariantsService.update(id, updateVariantDto);
   }
 
+  @HttpCode(204)
   @Delete(":id")
   @ApiOperation({ description: "exclui uma variante" })
   remove(@Param("id") id: string) {

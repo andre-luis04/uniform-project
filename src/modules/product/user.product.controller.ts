@@ -63,7 +63,7 @@ export class UserProductController {
 
   @ApiResponse({
       status: 200,
-      description: "produtos retornados com sucesso",
+      description: "produto especificado retornado com sucesso",
       content: {
         "application/json": {
           example: [

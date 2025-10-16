@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -23,6 +24,7 @@ import {
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @HttpCode(204)
   @Post()
   @ApiOperation({
     description:
@@ -107,6 +109,7 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
+  @HttpCode(204)
   @Patch(":id")
   @ApiOperation({
     description: "altera dados do usuario, pode ser alterado um ou mais",
@@ -115,6 +118,7 @@ export class UserController {
     return this.userService.update(id, updateMclientDto);
   }
 
+  @HttpCode(204)
   @Delete(":id")
   @ApiOperation({ description: "exclui usuario" })
   remove(@Param("id") id: string) {

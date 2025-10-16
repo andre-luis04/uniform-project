@@ -32,6 +32,7 @@ export class AdmProductController {
     return this.productService.create(createProductDto);
   }
 
+  @HttpCode(204)
   @Patch(":id")
   @ApiOperation({ description: "altera uma ou mais propriedades do produto" })
   update(
@@ -40,7 +41,7 @@ export class AdmProductController {
   ): Promise<void> {
     return this.productService.update(id, updateProductDto);
   }
-
+  @HttpCode(204)
   @Delete(":id")
   @ApiOperation({ description: "exclui um produto" })
   remove(@Param("id") id: string) {

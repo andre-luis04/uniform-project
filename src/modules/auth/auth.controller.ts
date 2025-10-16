@@ -22,6 +22,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Public()
+  @HttpCode(204)
   @Post("login")
   @ApiOperation({ description: "rota para fazer login no sistema" })
   async signIn(@Body() signInDto: SignInDto) {
@@ -35,6 +36,7 @@ export class AuthController {
 
   @Public()
   @Post("refresh")
+  @HttpCode(204)
   async refreshToken(@Req() req: Request) {
     const cookieToken = req.cookies["refreshToken"];
     const refreshToken = cookieToken;

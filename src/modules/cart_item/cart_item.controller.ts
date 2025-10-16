@@ -9,6 +9,7 @@ import {
   Query,
   ParseUUIDPipe,
   UseGuards,
+  HttpCode,
 } from "@nestjs/common";
 import { CartItemService } from "./cart_item.service";
 import { CreateCartItemDto } from "./dto/create-cart_item.dto";
@@ -31,6 +32,7 @@ export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}
 
   @UseGuards(AuthGuard("jwt"))
+  @HttpCode(204)
   @Post()
   @ApiOperation({ description: '"adiciona" um item ao carrinho' })
   create(
@@ -88,6 +90,7 @@ export class CartItemController {
     return this.cartItemService.findByUser(user.userId);
   }
 
+  @HttpCode(204)
   @Patch(":id")
   @ApiOperation({ description: "altera um item do carrinho" })
   update(
@@ -97,6 +100,7 @@ export class CartItemController {
     return this.cartItemService.update(id, updateCartItemDto);
   }
 
+  @HttpCode(204)
   @Delete(":id")
   @ApiOperation({ description: "remove um item do carrinho" })
   remove(@Param("id") id: string) {

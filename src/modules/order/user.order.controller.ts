@@ -8,6 +8,7 @@ import {
   Delete,
   ParseUUIDPipe,
   UseGuards,
+  HttpCode,
 } from "@nestjs/common";
 import { OrderService } from "./order.service";
 import { CreateOrderDto } from "./dto/create-order.dto";
@@ -25,6 +26,7 @@ export class UserOrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @UseGuards(AuthGuard("jwt"))
+  @HttpCode(204)
   @Post("finalize")
   @ApiOperation({ description: "rota para finalizar uma compra pelo usuario" })
   finalizeOrder(@currentUser() user: any): Promise<void> {
