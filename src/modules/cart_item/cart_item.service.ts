@@ -26,10 +26,13 @@ export class CartItemService {
   ): Promise<void> {
     const queryRunner = this.dataSource.createQueryRunner();
 
-    queryRunner.connect();
-    queryRunner.startTransaction();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
-      const cartItem = this.cartItemRepository.create({
+      const cartItemRepository =
+        queryRunner.manager.getRepository(CartItemEntity);
+
+      const cartItem = cartItemRepository.create({
         id_variant: createCartItemDto.id_variant,
         quantity: createCartItemDto.quantity,
         id_user: userId,
@@ -40,12 +43,13 @@ export class CartItemService {
         createCartItemDto.quantity
       );
 
-      await this.cartItemRepository.save(cartItem);
-      queryRunner.commitTransaction();
+      await cartItemRepository.save(cartItem);
+      await queryRunner.commitTransaction();
     } catch (err) {
-      queryRunner.rollbackTransaction();
+      await queryRunner.rollbackTransaction();
+      throw err;
     } finally {
-      queryRunner.release();
+      await queryRunner.release();
     }
   }
 

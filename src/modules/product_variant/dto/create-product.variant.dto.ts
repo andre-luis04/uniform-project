@@ -1,4 +1,4 @@
-import { isDecimal, IsNotEmpty, isNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 import { IProductVariants } from "../interfaces/product.variant.interface";
 import { ApiProperty } from "@nestjs/swagger";
 

@@ -10,8 +10,6 @@ import { UpdateProductVariantDto } from "./dto/update-product.variant.dto";
 import { ProductVariantEntity } from "./entities/product.variant.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { ProductVariantResponseDto } from "./dto/response-product.variant.dto";
-import { OnEvent } from "@nestjs/event-emitter";
 import { IncreaseStockDto } from "./dto/increase.stock.dto";
 import { MediaPathConfigService } from "src/configurations/media-path/media-path-config.service";
 import { UploadMediasUseCase } from "../media/media/use-cases/upload-medias.use-case";

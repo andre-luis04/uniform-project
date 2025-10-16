@@ -11,7 +11,7 @@ import {
 import { ColorService } from "./mcolor.service";
 import { CreateColorDto } from "./dto/create-color.dto";
 import { UpdateColorDto } from "./dto/update-color.dto";
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
 import { Roles } from "src/decorators/roles.decorator";
 import { RolesGuard } from "../auth/guards/roles.guard";
@@ -30,12 +30,50 @@ export class ColorController {
     return this.colorService.create(createColorDto);
   }
 
+   @ApiResponse({
+      status: 200,
+      description: "cores cadastradas retornadas com sucesso",
+      content: {
+        "application/json": {
+          example: [
+            {
+              created_at: "2025-10-08T20:27:03.773Z",
+              updated_at: "2025-10-08T20:27:03.773Z",
+              id: "e24b5f3f-2104-4066-a69c-3c9639a14f76",
+              color: "Azul"
+            },
+            {
+              created_at: "2025-10-13T16:49:25.581Z",
+              updated_at: "2025-10-13T16:49:25.581Z",
+              id: "ae2ad5e4-30df-4e17-8a7b-cc2e61f84dcf",
+              color: "vermelho"
+            }
+          ],
+        },
+      },
+    }) 
   @Get()
   @ApiOperation({ description: "encontra todas as cores" })
   findAll() {
     return this.colorService.findAll();
   }
 
+  @ApiResponse({
+    status: 200,
+    description: "cor especificada retornada com sucesso",
+    content: {
+      "application/json": {
+        example: [
+          {
+            created_at: "2025-10-08T20:27:03.773Z",
+            updated_at: "2025-10-08T20:27:03.773Z",
+            id: "e24b5f3f-2104-4066-a69c-3c9639a14f76",
+            color: "Azul"
+          }
+        ],
+      },
+    },
+  }) 
   @Get(":id")
   @ApiOperation({ description: "encontra a cor pelo seu id" })
   findOne(@Param("id") id: string) {

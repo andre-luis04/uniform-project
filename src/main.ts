@@ -9,7 +9,10 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.use(cookieParse());
 
-  const allowedOrigins = ["http://192.168.155.72:5173"];
+  const allowedOrigins = [
+    "http://192.168.155.72:5173",
+    "http://192.168.155.72:3000",
+  ];
 
   app.enableCors({ origin: allowedOrigins, credentials: true });
 

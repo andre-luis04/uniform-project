@@ -3,7 +3,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
-  OneToOne,
   DeleteDateColumn,
   BeforeInsert,
 } from "typeorm";
@@ -13,7 +12,6 @@ import { OrderEntity } from "src/modules/order/entities/order.entity";
 import { TimestampedEntity } from "src/shared/entities/timestamp.entity";
 import * as bcrypt from "bcrypt";
 import { CartItemEntity } from "src/modules/cart_item/entities/cart_item.entity";
-import { Roles } from "src/decorators/roles.decorator";
 import { UserRoles } from "src/enums/roles.enum";
 
 @Entity({ name: "user" })

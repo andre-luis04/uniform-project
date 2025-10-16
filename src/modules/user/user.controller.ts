@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -17,9 +16,6 @@ import {
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
-import { AuthGuard } from "@nestjs/passport";
-import { Roles } from "src/decorators/roles.decorator";
-import { RolesGuard } from "../auth/guards/roles.guard";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -66,7 +62,7 @@ export class UserController {
   @Get("with-deleted-user")
   @ApiResponse({
     status: 200,
-    description: "Lista de usuários retornada com sucesso",
+    description: "Lista de usuários (com possiveis usuarios deletados) retornada com sucesso",
     content: {
       "application/json": {
         example: [

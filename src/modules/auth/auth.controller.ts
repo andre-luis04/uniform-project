@@ -40,7 +40,7 @@ export class AuthController {
     const refreshToken = cookieToken;
 
     if (!refreshToken) {
-      console.log("eu odeio minha vida");
+      
       throw new UnauthorizedException("refresh token não encontrado");
     }
 
