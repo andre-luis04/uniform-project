@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpCode,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
@@ -15,6 +16,7 @@ import { ProductVariantsService } from "../product_variant/variants.service";
 import { OrderStatus } from "src/enums/status.enum";
 import { IsStatus } from "./functions/isStatus";
 import { DataSource } from "typeorm";
+import { error } from "console";
 
 @Injectable()
 export class OrderService {
@@ -115,20 +117,24 @@ export class OrderService {
 
   async update(id: string, updateOrderDto: UpdateOrderDto): Promise<void> {
     const queryRunner = this.dataSource.createQueryRunner();
-    queryRunner.connect();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    queryRunner.startTransaction();
     try {
-      const order = await this.findOne(id);
+      const orderRepository = queryRunner.manager.getRepository(OrderEntity);
+      const order = await orderRepository.findOne({ where: { id } });
+      if (!order) throw new NotFoundException("pedido não encontrado");
+
       if (!IsStatus(updateOrderDto.status)) {
         throw new BadRequestException("status invalido");
       }
-      await this.orderRepository.update(order.id, updateOrderDto);
-      queryRunner.commitTransaction();
+      await orderRepository.update(order.id, updateOrderDto);
+      await queryRunner.commitTransaction();
     } catch (err) {
-      queryRunner.rollbackTransaction();
+      await queryRunner.rollbackTransaction();
+      throw err;
     } finally {
-      queryRunner.release;
+      await queryRunner.release();
     }
   }
 
@@ -143,18 +149,23 @@ export class OrderService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const user = await this.userRepository.findOne({
+      const userRepository = queryRunner.manager.getRepository(UserEntity);
+      const user = await userRepository.findOne({
         where: { id: userId },
         relations: {
           cartItem: true,
         },
       });
+      console.log(user?.cartItem.length);
 
       if (!user || user.cartItem.length === 0) {
+        console.log("carrinho vazio");
         throw new BadRequestException("carrinho vazio ou usuario inexistente");
       }
 
-      const order = this.orderRepository.create({
+      const orderRepository = queryRunner.manager.getRepository(OrderEntity);
+
+      const order = orderRepository.create({
         user: user,
         orderVariant: user.cartItem.map((item) => ({
           id_product_variant: item.id_variant,
@@ -170,7 +181,7 @@ export class OrderService {
           )
         )
       );
-      await this.orderRepository.save(order);
+      await orderRepository.save(order);
       await this.cartItemService.removeByCart(user.id);
 
       this.eventEmitter.emit("order.created", {
@@ -182,6 +193,7 @@ export class OrderService {
       await queryRunner.commitTransaction();
     } catch (err) {
       await queryRunner.rollbackTransaction();
+      throw err;
     } finally {
       await queryRunner.release();
     }

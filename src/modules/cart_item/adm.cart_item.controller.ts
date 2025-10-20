@@ -1,5 +1,10 @@
 import { Controller, Get, UseGuards } from "@nestjs/common";
-import { ApiTags, ApiBearerAuth, ApiResponse } from "@nestjs/swagger";
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiResponse,
+  ApiOperation,
+} from "@nestjs/swagger";
 import { CartItemService } from "./cart_item.service";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { AuthGuard } from "@nestjs/passport";
@@ -38,6 +43,11 @@ export class AdmCartItemController {
         ],
       },
     },
+  })
+  @ApiOperation({
+    description:
+      "Retorna o carrinho de todos os usuarios que possuem itens adicionados ao carrinho",
+    summary: "Listar todos os carrinhos com itens no sistema",
   })
   @Get()
   findAll() {

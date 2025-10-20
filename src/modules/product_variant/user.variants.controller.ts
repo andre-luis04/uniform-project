@@ -75,11 +75,12 @@ export class UserProductVariantsController {
       },
     },
   })
-  @Get(":productId")
   @ApiOperation({
     description:
       "encontra uma variante pelo produto (ex: quando clica na camisa polo, tras as opçoes de cor e tamanho disponivel)",
+    summary: "Retorna as variantes de um produto especifico",
   })
+  @Get(":productId")
   findAll(@Param("productId", ParseUUIDPipe) productId: string) {
     return this.ProductVariantsService.findAllByProduct(productId);
   }

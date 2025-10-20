@@ -8,12 +8,14 @@ import {
   Delete,
   UseGuards,
   HttpCode,
+  ParseUUIDPipe,
 } from "@nestjs/common";
 import { SizeService } from "./size.service";
 import { CreateSizeDto } from "./dto/create-size.dto";
 import { UpdateSizeDto } from "./dto/update-size.dto";
 import {
   ApiBearerAuth,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -30,9 +32,13 @@ import { RolesGuard } from "../auth/guards/roles.guard";
 export class SizeController {
   constructor(private readonly sizeService: SizeService) {}
 
+  @ApiResponse({
+    status: 204,
+    description: "No Content",
+  })
   @HttpCode(204)
+  @ApiOperation({ description: "cria um tamanho", summary: "Criar um tamanho" })
   @Post()
-  @ApiOperation({ description: "cria um tamanho" })
   create(@Body() createSizeDto: CreateSizeDto) {
     return this.sizeService.create(createSizeDto);
   }
@@ -59,13 +65,16 @@ export class SizeController {
       },
     },
   })
+  @ApiOperation({
+    description: "encontra todos os tamanhos cadastrados",
+    summary: "Listar todos os tamanhos",
+  })
   @Get()
-  @ApiOperation({ description: "encontra todos os tamanhos cadastrados" })
   findAll() {
     return this.sizeService.findAll();
   }
 
- @ApiResponse({
+  @ApiResponse({
     status: 200,
     description: "tamanho especificado retornado com sucesso",
     content: {
@@ -80,24 +89,44 @@ export class SizeController {
         ],
       },
     },
-  }) 
+  })
+  @ApiNotFoundResponse({ description: "**Tamanho não encontrado**" })
+  @ApiOperation({
+    description: "encontra um tamanho pelo id",
+    summary: "Retorna um tamanho pelo ID",
+  })
   @Get(":id")
-  @ApiOperation({ description: "encontra um tamanho pelo id" })
-  findOne(@Param("id") id: string) {
+  findOne(@Param("id", ParseUUIDPipe) id: string) {
     return this.sizeService.findOne(id);
   }
 
+  @ApiResponse({
+    status: 204,
+    description: "No Content",
+  })
+  @ApiNotFoundResponse({ description: "**Tamanho não encontrado**" })
   @HttpCode(204)
+  @ApiOperation({
+    description: "altera um tamanho",
+    summary: "Alterar um tamanho",
+  })
   @Patch(":id")
-  @ApiOperation({ description: "altera um tamanho" })
-  update(@Param("id") id: string, @Body() updateSizeDto: UpdateSizeDto) {
+  update(@Param("id", ParseUUIDPipe) id: string, @Body() updateSizeDto: UpdateSizeDto) {
     return this.sizeService.update(id, updateSizeDto);
   }
 
+  @ApiResponse({
+    status: 204,
+    description: "No Content",
+  })
+  @ApiNotFoundResponse({ description: "**tamanho não encontrado**" })
   @HttpCode(204)
+  @ApiOperation({
+    description: "exclui um tamanho",
+    summary: "Deletar um tamanho",
+  })
   @Delete(":id")
-  @ApiOperation({ description: "exclui um tamanho" })
-  remove(@Param("id") id: string) {
+  remove(@Param("id", ParseUUIDPipe) id: string) {
     return this.sizeService.remove(id);
   }
 }

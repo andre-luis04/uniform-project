@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   HttpCode,
+  ParseUUIDPipe,
 } from "@nestjs/common";
 import { ProductVariantsService } from "./variants.service";
 import { CreateProductVariantDto } from "./dto/create-product.variant.dto";
@@ -18,6 +19,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -38,10 +40,16 @@ export class AdmProductVariantsController {
     private readonly ProductVariantsService: ProductVariantsService
   ) {}
 
+  @ApiResponse({
+    status: 204,
+    description: "No Content",
+  })
   @HttpCode(204)
-  @Post()
   @ApiConsumes("multipart/form-data")
-  @ApiOperation({ description: "cria uma variação de produto" })
+  @ApiOperation({
+    description: "cria uma variação de produto",
+    summary: "Criar uma variação de produto",
+  })
   @ApiBody({
     schema: {
       type: "object",
@@ -64,6 +72,7 @@ export class AdmProductVariantsController {
     },
   })
   @UseInterceptors(FilesInterceptor("files"))
+  @Post()
   create(
     @Body() createProductVariantDto: CreateProductVariantDto,
     @UploadedFiles() files: Array<Express.Multer.File>
@@ -71,7 +80,10 @@ export class AdmProductVariantsController {
     return this.ProductVariantsService.create(createProductVariantDto, files);
   }
 
-    @ApiResponse({
+  @ApiNotFoundResponse({
+    description: "**variante de produto não encontrado**",
+  })
+  @ApiResponse({
     status: 200,
     description: "variante de produto especificado retornado com sucesso",
     content: {
@@ -86,95 +98,107 @@ export class AdmProductVariantsController {
             price: "170",
             id_size: "7cdc6daf-8bfa-4921-aa53-af03469039d2",
             stock: 10,
-            ids_media: [
-              "32646128901378048"
-            ],
+            ids_media: ["32646128901378048"],
             product: {
               created_at: "2025-10-08T20:26:48.948Z",
               updated_at: "2025-10-13T17:56:02.744Z",
               id: "0f8e161c-aa2f-4f82-bda4-add179abb958",
               name: "Camisa Polo",
-              description: "100% algodão é vdd 100% nem 1% de outra coisa confia"
+              description:
+                "100% algodão é vdd 100% nem 1% de outra coisa confia",
             },
             size: {
               created_at: "2025-10-08T20:26:57.275Z",
               updated_at: "2025-10-08T20:26:57.275Z",
               id: "7cdc6daf-8bfa-4921-aa53-af03469039d2",
-              size: "P"
+              size: "P",
             },
             color: {
               created_at: "2025-10-08T20:27:03.773Z",
               updated_at: "2025-10-08T20:27:03.773Z",
               id: "e24b5f3f-2104-4066-a69c-3c9639a14f76",
-              color: "Azul"
-            }
-          }
+              color: "Azul",
+            },
+          },
         ],
       },
     },
   })
+  @ApiOperation({
+    description: "encontra uma variante pelo id",
+    summary: "Retorna uma variante de produto pelo ID",
+  })
   @Get(":id")
-  @ApiOperation({ description: "encontra uma variante pelo id" })
-  findOne(@Param("id") id: string) {
+  findOne(@Param("id", ParseUUIDPipe) id: string) {
     return this.ProductVariantsService.findOne(id);
   }
 
-    @ApiResponse({
-      status: 200,
-      description: "todas as variantes de produtos retornadas com sucesso",
-      content: {
-        "application/json": {
-          example: [
-           {
-              id: "d025bcd2-3ae0-4417-b5a7-3ae81c17c1c7",
-              price: "170",
-              stock: 10,
-              product: {
-                id: "0f8e161c-aa2f-4f82-bda4-add179abb958",
-                name: "Camisa Polo"
-              },
-              size: {
-                id: "7cdc6daf-8bfa-4921-aa53-af03469039d2",
-                size: "P"
-              },
-              color: {
-                id: "e24b5f3f-2104-4066-a69c-3c9639a14f76",
-                color: "Azul"
-              }
+  @ApiResponse({
+    status: 200,
+    description: "todas as variantes de produtos retornadas com sucesso",
+    content: {
+      "application/json": {
+        example: [
+          {
+            id: "d025bcd2-3ae0-4417-b5a7-3ae81c17c1c7",
+            price: "170",
+            stock: 10,
+            product: {
+              id: "0f8e161c-aa2f-4f82-bda4-add179abb958",
+              name: "Camisa Polo",
             },
-            {
-              id: "e18c40a8-812e-477a-8b26-4c5e3896be28",
-              price: "199",
-              stock: 10,
-              product: {
-                id: "5b6f8e3d-4bc2-4de4-a404-947c5cf4bde7",
-                name: "Camisa Social"
-              },
-              size: {
-                id: "f162c3d5-e085-4fa4-a5f3-df468b191995",
-                size: "XG"
-              },
-              color: {
-                id: "ae2ad5e4-30df-4e17-8a7b-cc2e61f84dcf",
-                color: "vermelho"
-              }
+            size: {
+              id: "7cdc6daf-8bfa-4921-aa53-af03469039d2",
+              size: "P",
             },
-          ],
-        },
+            color: {
+              id: "e24b5f3f-2104-4066-a69c-3c9639a14f76",
+              color: "Azul",
+            },
+          },
+          {
+            id: "e18c40a8-812e-477a-8b26-4c5e3896be28",
+            price: "199",
+            stock: 10,
+            product: {
+              id: "5b6f8e3d-4bc2-4de4-a404-947c5cf4bde7",
+              name: "Camisa Social",
+            },
+            size: {
+              id: "f162c3d5-e085-4fa4-a5f3-df468b191995",
+              size: "XG",
+            },
+            color: {
+              id: "ae2ad5e4-30df-4e17-8a7b-cc2e61f84dcf",
+              color: "vermelho",
+            },
+          },
+        ],
       },
-    })
+    },
+  })
+  @ApiOperation({
+    description: "encontra todas as variantes",
+    summary: "Lista todas as variantes de produtos",
+  })
   @Get()
-  @ApiOperation({ description: "encontra todas as variantes" })
   findAll() {
     return this.ProductVariantsService.findAll();
   }
 
+  @ApiResponse({
+    status: 204,
+    description: "No Content",
+  })
+  @ApiNotFoundResponse({
+    description: "**variante de produto não encontrado**",
+  })
   @HttpCode(204)
-  @Patch("increase-stock/:id")
   @ApiConsumes("multipart/form-data")
   @ApiOperation({
     description:
-      "rota para adicionar estoque (o numero inserido será adicionado ao estoque já existente)",
+      "rota para adicionar estoque (o numero inserido será somado ao estoque já existente)",
+    summary: "Adicionar produtos ao estoque",
   })
   @ApiBody({
     schema: {
@@ -185,26 +209,41 @@ export class AdmProductVariantsController {
       required: [],
     },
   })
-  increaseStock(@Param("id") id: string, @Body() quantity: IncreaseStockDto) {
+  @Patch("increase-stock/:id")
+  increaseStock(@Param("id", ParseUUIDPipe) id: string, @Body() quantity: IncreaseStockDto) {
     return this.ProductVariantsService.increaseStock(id, quantity);
   }
 
-  @HttpCode(204)
-  @Patch(":id")
-  @ApiOperation({
-    description: "altera uma ou mais propriedades de uma variante",
+  @ApiResponse({
+    status: 204,
+    description: "No Content",
   })
+  @HttpCode(204)
+  @ApiNotFoundResponse({
+    description: "**variante de produto não encontrado**",
+  })
+  @ApiOperation({
+    description: "altera uma ou mais propriedades de uma variante", summary: "Alterar uma variante de produto"
+  })
+  @Patch(":id")
   update(
-    @Param("id") id: string,
+    @Param("id", ParseUUIDPipe) id: string,
     @Body() updateVariantDto: UpdateProductVariantDto
   ) {
     return this.ProductVariantsService.update(id, updateVariantDto);
   }
 
+  @ApiResponse({
+    status: 204,
+    description: "No Content",
+  })
+  @ApiNotFoundResponse({
+    description: "**variante de produto não encontrado**",
+  })
   @HttpCode(204)
+  @ApiOperation({ description: "exclui uma variante", summary: "Deletar uma variante de produto" })
   @Delete(":id")
-  @ApiOperation({ description: "exclui uma variante" })
-  remove(@Param("id") id: string) {
+  remove(@Param("id", ParseUUIDPipe) id: string) {
     return this.ProductVariantsService.remove(id);
   }
 }

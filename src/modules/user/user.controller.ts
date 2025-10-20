@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   HttpCode,
+  ParseUUIDPipe,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import {
   ApiBearerAuth,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -24,17 +26,21 @@ import {
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiResponse({
+    status: 204,
+    description: "No content",
+  })
   @HttpCode(204)
-  @Post()
   @ApiOperation({
+    summary: "Criar usuario",
     description:
       "rota para criar usuario, role não está explicito, mas como padrão é user normal",
   })
+  @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
 
-  @Get()
   @ApiResponse({
     status: 200,
     description: "Lista de usuários retornada com sucesso",
@@ -57,14 +63,19 @@ export class UserController {
       },
     },
   })
+  @ApiOperation({
+    summary: "Listar usuarios",
+    description: "Lista todos os usuario",
+  })
+  @Get()
   findAll() {
     return this.userService.findAll();
   }
 
-  @Get("with-deleted-user")
   @ApiResponse({
     status: 200,
-    description: "Lista de usuários (com possiveis usuarios deletados) retornada com sucesso",
+    description:
+      "Lista de usuários (com possiveis usuarios deletados) retornada com sucesso",
     content: {
       "application/json": {
         example: [
@@ -84,14 +95,19 @@ export class UserController {
       },
     },
   })
+  @ApiOperation({
+    summary: "Listar usuarios ativos e deletados",
+    description: "rota para listar usuarios ativos e deletados",
+  })
+  @Get("with-deleted-user")
   async findAllDeletedUser() {
     return await this.userService.findAllDeletedUser();
   }
 
-  @Get(":id")
+  @ApiNotFoundResponse({ description: "**Usuario não encontrado**" })
   @ApiResponse({
     status: 200,
-    description: "usuário retornado com sucesso",
+    description: "Usuário retornado com sucesso",
     content: {
       "application/json": {
         example: [
@@ -105,23 +121,42 @@ export class UserController {
       },
     },
   })
-  findOne(@Param("id") id: string) {
+  @ApiOperation({
+    summary: "Encontrar usuario pelo ID",
+    description: "Encontra usuario pelo ID",
+  })
+  @Get(":id")
+  findOne(@Param("id", ParseUUIDPipe) id: string) {
     return this.userService.findOne(id);
   }
 
+  @ApiResponse({
+    status: 204,
+    description: "No Content",
+  })
+  @ApiNotFoundResponse({ description: "**Usuario não encontrado**" })
   @HttpCode(204)
-  @Patch(":id")
   @ApiOperation({
     description: "altera dados do usuario, pode ser alterado um ou mais",
+    summary: "Alterar dados do usuário",
   })
-  update(@Param("id") id: string, @Body() updateMclientDto: UpdateUserDto) {
+  @Patch(":id")
+  update(@Param("id", ParseUUIDPipe) id: string, @Body() updateMclientDto: UpdateUserDto) {
     return this.userService.update(id, updateMclientDto);
   }
 
+  @ApiResponse({
+    status: 204,
+    description: "**No Content**",
+  })
+  @ApiNotFoundResponse({ description: "**Usuario não encontrado**" })
+  @ApiOperation({
+    description: "deleta usuario",
+    summary: "deletar usuário",
+  })
   @HttpCode(204)
   @Delete(":id")
-  @ApiOperation({ description: "exclui usuario" })
-  remove(@Param("id") id: string) {
+  remove(@Param("id", ParseUUIDPipe) id: string) {
     return this.userService.remove(id);
   }
 }

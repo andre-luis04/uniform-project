@@ -14,7 +14,13 @@ import { OrderService } from "./order.service";
 import { CreateOrderDto } from "./dto/create-order.dto";
 import { UpdateOrderDto } from "./dto/update-order.dto";
 import { UUID } from "crypto";
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from "@nestjs/swagger";
 import { currentUser } from "src/decorators/current.user.decorator";
 import { UserEntity } from "../user/entities/user.entity";
 import { AuthGuard } from "@nestjs/passport";
@@ -30,74 +36,76 @@ export class AdmOrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @ApiResponse({
-      status: 200,
-      description: "pedidos retornados com sucesso",
-      content: {
-        "application/json": {
-          example: [
+    status: 200,
+    description: "pedidos retornados com sucesso",
+    content: {
+      "application/json": {
+        example: [
+          {
+            created_at: "2025-10-16T16:11:44.666Z",
+            updated_at: "2025-10-16T16:11:44.666Z",
+            id: "5636f5f9-2683-43ca-8d3b-778c6d813c07",
+            id_user: "906abe3d-bf58-44fd-984f-beb87ec7d256",
+            status: "pendente",
+            orderVariant: [
               {
-                created_at: "2025-10-16T16:11:44.666Z",
-                updated_at: "2025-10-16T16:11:44.666Z",
-                id: "5636f5f9-2683-43ca-8d3b-778c6d813c07",
-                id_user: "906abe3d-bf58-44fd-984f-beb87ec7d256",
-                status: "pendente",
-                orderVariant: [
-                  {
-                    id_product_variant: "d025bcd2-3ae0-4417-b5a7-3ae81c17c1c7",
-                    productVariant: {
-                      id: "d025bcd2-3ae0-4417-b5a7-3ae81c17c1c7",
-                      price: "170",
-                      product: {
-                        id: "0f8e161c-aa2f-4f82-bda4-add179abb958",
-                        name: "Camisa Polo"
-                      },
-                      size: {
-                        id: "7cdc6daf-8bfa-4921-aa53-af03469039d2",
-                        size: "P"
-                      },
-                      color: {
-                        id: "e24b5f3f-2104-4066-a69c-3c9639a14f76",
-                        color: "Azul"
-                      }
-                    },
-                    
-                  }
-                ]
+                id_product_variant: "d025bcd2-3ae0-4417-b5a7-3ae81c17c1c7",
+                productVariant: {
+                  id: "d025bcd2-3ae0-4417-b5a7-3ae81c17c1c7",
+                  price: "170",
+                  product: {
+                    id: "0f8e161c-aa2f-4f82-bda4-add179abb958",
+                    name: "Camisa Polo",
+                  },
+                  size: {
+                    id: "7cdc6daf-8bfa-4921-aa53-af03469039d2",
+                    size: "P",
+                  },
+                  color: {
+                    id: "e24b5f3f-2104-4066-a69c-3c9639a14f76",
+                    color: "Azul",
+                  },
+                },
               },
-                {
-                  created_at: "2025-10-16T16:11:44.666Z",
-                  updated_at: "2025-10-16T16:11:44.666Z",
-                  id: "5636f5f9-2683-43ca-8d3b-778c6d813c07",
-                  id_user: "906abe3d-bf58-44fd-984f-beb87ec7d256",
-                  status: "pendente",
-                  orderVariant: [
-                    {
-                      id_product_variant: "d025bcd2-3ae0-4417-b5a7-3ae81c17c1c7",
-                      productVariant: {
-                        id: "d025bcd2-3ae0-4417-b5a7-3ae81c17c1c7",
-                        price: "170",
-                        product: {
-                          id: "0f8e161c-aa2f-4f82-bda4-add179abb958",
-                          name: "Camisa Polo"
-                        },
-                        size: {
-                          id: "7cdc6daf-8bfa-4921-aa53-af03469039d2",
-                          size: "P"
-                        },
-                        color: {
-                          id: "e24b5f3f-2104-4066-a69c-3c9639a14f76",
-                          color: "Azul"
-                        }
-                      }
-                    }
-                  ]
-                }
-          ],
-        },
+            ],
+          },
+          {
+            created_at: "2025-10-16T16:11:44.666Z",
+            updated_at: "2025-10-16T16:11:44.666Z",
+            id: "5636f5f9-2683-43ca-8d3b-778c6d813c07",
+            id_user: "906abe3d-bf58-44fd-984f-beb87ec7d256",
+            status: "pendente",
+            orderVariant: [
+              {
+                id_product_variant: "d025bcd2-3ae0-4417-b5a7-3ae81c17c1c7",
+                productVariant: {
+                  id: "d025bcd2-3ae0-4417-b5a7-3ae81c17c1c7",
+                  price: "170",
+                  product: {
+                    id: "0f8e161c-aa2f-4f82-bda4-add179abb958",
+                    name: "Camisa Polo",
+                  },
+                  size: {
+                    id: "7cdc6daf-8bfa-4921-aa53-af03469039d2",
+                    size: "P",
+                  },
+                  color: {
+                    id: "e24b5f3f-2104-4066-a69c-3c9639a14f76",
+                    color: "Azul",
+                  },
+                },
+              },
+            ],
+          },
+        ],
       },
-    })
+    },
+  })
+  @ApiOperation({
+    description: "encontra todos os pedidos",
+    summary: "Listar todos os pedidos ja feitos",
+  })
   @Get()
-  @ApiOperation({ description: "encontra todos os pedidos" })
   findAll() {
     return this.orderService.findAll();
   }
@@ -113,29 +121,46 @@ export class AdmOrderController {
             updated_at: "2025-10-16T16:11:44.666Z",
             id: "5636f5f9-2683-43ca-8d3b-778c6d813c07",
             id_user: "906abe3d-bf58-44fd-984f-beb87ec7d256",
-            status: "pendente"
-          }
+            status: "pendente",
+          },
         ],
       },
     },
   })
+  @ApiNotFoundResponse({ description: "**Pedido não encontrado**" })
+  @ApiOperation({
+    description: "encontra o pedido pelo seu id",
+    summary: "Encontrar pedido pelo seu ID",
+  })
   @Get(":id")
-  @ApiOperation({ description: "encontra o pedido pelo seu id" })
-  findOne(@Param("id") id: string) {
+  findOne(@Param("id", ParseUUIDPipe, ParseUUIDPipe) id: string) {
     return this.orderService.findOne(id);
   }
 
+  @ApiResponse({
+    status: 204,
+    description: "No Content",
+  })
+  @ApiNotFoundResponse({ description: "**Pedido não encontrado**" })
   @HttpCode(204)
+  @ApiOperation({
+    description: "altera um pedido",
+    summary: "Alterar pedido existente (como adm)",
+  })
   @Patch(":id")
-  @ApiOperation({ description: "altera um pedido" })
-  update(@Param("id") id: string, @Body() updateOrderDto: UpdateOrderDto) {
+  update(@Param("id", ParseUUIDPipe) id: string, @Body() updateOrderDto: UpdateOrderDto) {
     return this.orderService.update(id, updateOrderDto);
   }
 
+  @ApiResponse({
+    status: 204,
+    description: "No Content",
+  })
+  @ApiNotFoundResponse({ description: "**Pedido não encontrado**" })
   @HttpCode(204)
+  @ApiOperation({ description: "exclui um pedido", summary: "Deletar pedido" })
   @Delete(":id")
-  @ApiOperation({ description: "exclui um pedido" })
-  remove(@Param("id") id: string) {
+  remove(@Param("id", ParseUUIDPipe) id: string) {
     return this.orderService.remove(id);
   }
 }

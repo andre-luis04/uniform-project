@@ -16,6 +16,7 @@ import { CreateCartItemDto } from "./dto/create-cart_item.dto";
 import { UpdateCartItemDto } from "./dto/update-cart_item.dto";
 import {
   ApiBearerAuth,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -31,10 +32,17 @@ import { RolesGuard } from "../auth/guards/roles.guard";
 export class CartItemController {
   constructor(private readonly cartItemService: CartItemService) {}
 
+  @ApiResponse({
+    status: 204,
+    description: "No Content",
+  })
   @UseGuards(AuthGuard("jwt"))
   @HttpCode(204)
+  @ApiOperation({
+    description: '"adiciona" um item ao carrinho',
+    summary: "Adicionar item ao carrinho conforme usuario que esta logado",
+  })
   @Post()
-  @ApiOperation({ description: '"adiciona" um item ao carrinho' })
   create(
     @Body() createCartItemDto: CreateCartItemDto,
     @currentUser() user: any
@@ -80,30 +88,49 @@ export class CartItemController {
       },
     },
   })
+  @ApiNotFoundResponse({ description: "**Não há itens no carrinho**" })
   @UseGuards(AuthGuard("jwt"))
-  @Get("by-current-user")
   @ApiOperation({
-    description: "busca todos os itens no carrinho do usuario logado",
+    description:
+      "Rota para fazer a parte de visualização do carrinho do usuario logado",
+    summary: "Listar todos os itens no carrinho do usuario logado",
   })
+  @Get("by-current-user")
   findByUser(@currentUser() user: any) {
     console.log("CART BY: ", user);
     return this.cartItemService.findByUser(user.userId);
   }
 
+  @ApiResponse({
+    status: 204,
+    description: "No Content",
+  })
+  @ApiNotFoundResponse({ description: "**Item não encontrado**" })
   @HttpCode(204)
+  @ApiOperation({
+    description: "altera um item do carrinho",
+    summary: "Alterar um item do carrinho",
+  })
   @Patch(":id")
-  @ApiOperation({ description: "altera um item do carrinho" })
   update(
-    @Param("id") id: string,
+    @Param("id", ParseUUIDPipe) id: string,
     @Body() updateCartItemDto: UpdateCartItemDto
   ) {
     return this.cartItemService.update(id, updateCartItemDto);
   }
 
+  @ApiResponse({
+    status: 204,
+    description: "No Content",
+  })
+  @ApiNotFoundResponse({ description: "**Item não encontrado**" })
   @HttpCode(204)
+  @ApiOperation({
+    description: "remove um item do carrinho",
+    summary: "Remover item do carrinho",
+  })
   @Delete(":id")
-  @ApiOperation({ description: "remove um item do carrinho" })
-  remove(@Param("id") id: string) {
+  remove(@Param("id", ParseUUIDPipe) id: string) {
     return this.cartItemService.remove(id);
   }
 }

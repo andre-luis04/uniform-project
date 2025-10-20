@@ -54,13 +54,7 @@ export class UserService {
     if (!user) {
       throw new NotFoundException("Cliente não encontrado");
     }
-
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-    };
+    return user;
   }
 
   async findByEmail(email: string): Promise<UserEntity> {
