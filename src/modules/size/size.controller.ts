@@ -15,6 +15,8 @@ import { CreateSizeDto } from "./dto/create-size.dto";
 import { UpdateSizeDto } from "./dto/update-size.dto";
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiNotFoundResponse,
   ApiOperation,
   ApiResponse,
@@ -111,7 +113,10 @@ export class SizeController {
     summary: "Alterar um tamanho",
   })
   @Patch(":id")
-  update(@Param("id", ParseUUIDPipe) id: string, @Body() updateSizeDto: UpdateSizeDto) {
+  update(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Body() updateSizeDto: UpdateSizeDto
+  ) {
     return this.sizeService.update(id, updateSizeDto);
   }
 

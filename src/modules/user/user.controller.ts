@@ -27,21 +27,6 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiResponse({
-    status: 204,
-    description: "No content",
-  })
-  @HttpCode(204)
-  @ApiOperation({
-    summary: "Criar usuario",
-    description:
-      "rota para criar usuario, role não está explicito, mas como padrão é user normal",
-  })
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
-
-  @ApiResponse({
     status: 200,
     description: "Lista de usuários retornada com sucesso",
     content: {
@@ -70,6 +55,19 @@ export class UserController {
   @Get()
   findAll() {
     return this.userService.findAll();
+  }
+  @ApiResponse({
+    status: 204,
+    description: "No content",
+  })
+  @ApiOperation({
+    summary: "Criar usuario",
+    description:
+      "rota para criar usuario, role não está explicito, mas como padrão é user normal",
+  })
+  @Post()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
   }
 
   @ApiResponse({
@@ -141,7 +139,10 @@ export class UserController {
     summary: "Alterar dados do usuário",
   })
   @Patch(":id")
-  update(@Param("id", ParseUUIDPipe) id: string, @Body() updateMclientDto: UpdateUserDto) {
+  update(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Body() updateMclientDto: UpdateUserDto
+  ) {
     return this.userService.update(id, updateMclientDto);
   }
 

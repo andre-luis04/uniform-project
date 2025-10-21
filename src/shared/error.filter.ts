@@ -42,6 +42,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         stack: (exception as any)?.["stack"],
       };
       this.writeErrorLog(errorLog);
+      console.log(errorLog)
     }
     response.status(status).json(responseBody);
   }

@@ -23,8 +23,6 @@ import { AuthModule } from "./modules/auth/auth.module";
 import { EventEmitterModule } from "@nestjs/event-emitter";
 import { MediaPathConfigModule } from "./configurations/media-path/media-path-config.module";
 import { MediaApiModule } from "./modules/media/media/media-api.module";
-import { ConfigModule } from "@nestjs/config";
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({
