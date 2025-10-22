@@ -1,37 +1,38 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateSizeDto } from './dto/create-size.dto';
-import { UpdateSizeDto } from './dto/update-size.dto';
-import { SizeEntity } from './entities/size.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { CreateSizeDto } from "./dto/create-size.dto";
+import { UpdateSizeDto } from "./dto/update-size.dto";
+import { SizeEntity } from "./entities/size.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class SizeService {
   constructor(
     @InjectRepository(SizeEntity)
-    private readonly sizeRepository: Repository<SizeEntity>,
+    private readonly sizeRepository: Repository<SizeEntity>
   ) {}
 
-  async create(createSizeDto: CreateSizeDto): Promise<void>{
-    const size =  this.sizeRepository.create(createSizeDto);
-    await this.sizeRepository.save(size);
+  async create(createSizeDto: CreateSizeDto): Promise<SizeEntity> {
+    const size = this.sizeRepository.create(createSizeDto);
+    return await this.sizeRepository.save(size);
   }
 
-  async findAll() : Promise<SizeEntity[]> {
-    return await this.sizeRepository.find(); 
+  async findAll(): Promise<SizeEntity[]> {
+    return await this.sizeRepository.find();
   }
 
   async findOne(id: string): Promise<SizeEntity> {
-    const size = await this.sizeRepository.findOne({where : {id}})
-    if(!size){
-      throw new NotFoundException('tamanho não encontrado');
+    const size = await this.sizeRepository.findOne({ where: { id } });
+    if (!size) {
+      throw new NotFoundException("tamanho não encontrado");
     }
     return size;
   }
 
-  async update(id: string, updateSizeDto: UpdateSizeDto): Promise<void> {
+  async update(id: string, updateSizeDto: UpdateSizeDto): Promise<SizeEntity> {
     const size = await this.findOne(id);
     await this.sizeRepository.update(size.id, updateSizeDto);
+    return this.findOne(id)
   }
 
   async remove(id: string): Promise<void> {

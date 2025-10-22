@@ -1,17 +1,11 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { SizeService } from "./size.service";
-import { SizeEntity } from "./entities/size.entity";
+import { SizeService } from "../size.service";
+import { SizeEntity } from "../entities/size.entity";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { CreateSizeDto } from "./dto/create-size.dto";
-import { resolveObjectURL } from "buffer";
-import { NotFoundError } from "rxjs";
 import { NotFoundException } from "@nestjs/common";
 
-const mockSizeEntity = {
-  id: "uuid-123",
-  size: "M",
-};
+const mockSizeEntity = new SizeEntity();
 
 describe("SizeService", () => {
   let service: SizeService;
@@ -27,6 +21,7 @@ describe("SizeService", () => {
   };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       imports: [SizeEntity],
       providers: [
@@ -41,16 +36,22 @@ describe("SizeService", () => {
 
   describe("create", () => {
     it("deve criar um size", async () => {
-      const dto = { size: "P" };
-      const createdSize = { ...dto } as SizeEntity;
+      const createDto = { size: "M" };
+      const createdSize = new SizeEntity();
 
       repository.create.mockReturnValue(createdSize);
       repository.save.mockResolvedValue(createdSize);
+
+      const result = await service.create(createDto);
+
+      expect(repository.create).toHaveBeenCalledWith(createDto);
+      expect(repository.save).toHaveBeenCalledWith(createdSize);
+      expect(result).toEqual(createdSize);
     });
   });
   describe("findAll", () => {
     it("deve retornar uma lista de sizes", async () => {
-      repository.find.mockResolvedValue([mockSizeEntity] as SizeEntity[]);
+      repository.find.mockResolvedValue([mockSizeEntity]);
       const result = await service.findAll();
       expect(result).toEqual([mockSizeEntity]);
       expect(repository.find).toHaveBeenCalled();
@@ -58,7 +59,7 @@ describe("SizeService", () => {
   });
   describe("findOne", () => {
     it("deve retornar um size pelo ID", async () => {
-      repository.findOne.mockResolvedValue(mockSizeEntity as SizeEntity);
+      repository.findOne.mockResolvedValue(mockSizeEntity);
       const result = await service.findOne("uuid-123");
       expect(result).toEqual(mockSizeEntity);
       expect(repository.findOne).toHaveBeenCalledWith({
@@ -81,26 +82,41 @@ describe("SizeService", () => {
         affected: 1,
       };
 
-      repository.findOne.mockResolvedValue(mockSizeEntity as SizeEntity);
+      repository.findOne.mockResolvedValue(mockSizeEntity);
       repository.update.mockResolvedValue(mockUpdateResult);
 
-      await service.update("uuid-123", updateDto);
+      const result = await service.update("uuid-123", updateDto);
 
+      
       expect(repository.update).toHaveBeenCalledWith(
         mockSizeEntity.id,
         updateDto
       );
-      await expect(repository.update).resolves.toEqual(mockUpdateResult);
+      
+      expect(result).toEqual(mockSizeEntity)
+    });
+    it("deve retornar not found se não encontrar o size", async () => {
+      const updateDto = { size: "XL" };
+      repository.findOne.mockResolvedValue(null);
+      await expect(service.update("uuid-notFound", updateDto)).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
   describe("delete", () => {
     it("deve deletar um size", async () => {
-      repository.findOne.mockResolvedValue(mockSizeEntity as SizeEntity);
-      repository.remove.mockResolvedValue(mockSizeEntity as SizeEntity);
+      repository.findOne.mockResolvedValue(mockSizeEntity);
+      repository.remove.mockResolvedValue(mockSizeEntity);
 
       await service.remove("uuid-123");
 
       expect(repository.remove).toHaveBeenCalledWith(mockSizeEntity);
+    });
+    it("deve retornar not found se não encontrar o size", async () => {
+      repository.findOne.mockResolvedValue(null);
+      await expect(service.remove("uuid-notFound")).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 });

@@ -11,9 +11,9 @@ export class ColorService {
     @InjectRepository(ColorEntity)
     private readonly colorRepository: Repository<ColorEntity>
   ) {}
-  async create(createColorDto: CreateColorDto): Promise<void> {
+  async create(createColorDto: CreateColorDto): Promise<ColorEntity> {
     const color = this.colorRepository.create(createColorDto);
-    await this.colorRepository.save(color);
+    return await this.colorRepository.save(color);
   }
 
   async findAll(): Promise<ColorEntity[]> {
@@ -40,12 +40,16 @@ export class ColorService {
     return color;
   }
 
-  async update(id: string, updateColorDto: UpdateColorDto): Promise<void> {
+  async update(
+    id: string,
+    updateColorDto: UpdateColorDto
+  ): Promise<ColorEntity> {
     const color = await this.getExistingColor({
       where: { id: id },
     });
 
     await this.colorRepository.update(color.id, updateColorDto);
+    return this.findOne(id);
   }
 
   async remove(id: string): Promise<void> {
