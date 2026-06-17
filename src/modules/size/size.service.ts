@@ -7,6 +7,7 @@ import { Repository } from "typeorm";
 
 @Injectable()
 export class SizeService {
+
   constructor(
     @InjectRepository(SizeEntity)
     private readonly sizeRepository: Repository<SizeEntity>
@@ -32,7 +33,7 @@ export class SizeService {
   async update(id: string, updateSizeDto: UpdateSizeDto): Promise<SizeEntity> {
     const size = await this.findOne(id);
     await this.sizeRepository.update(size.id, updateSizeDto);
-    return this.findOne(id)
+    return this.findOne(id);
   }
 
   async remove(id: string): Promise<void> {

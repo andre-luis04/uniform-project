@@ -20,7 +20,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger";
 
-@ApiTags("User")
+@ApiTags("Userrrr")
 @ApiBearerAuth()
 @Controller("admin/user")
 export class UserController {

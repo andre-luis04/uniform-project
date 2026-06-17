@@ -6,7 +6,6 @@ import { Repository } from "typeorm";
 import { NotFoundException } from "@nestjs/common";
 
 const mockSizeEntity = new SizeEntity();
-
 describe("SizeService", () => {
   let service: SizeService;
   let repository: jest.Mocked<Repository<SizeEntity>>;
@@ -87,13 +86,12 @@ describe("SizeService", () => {
 
       const result = await service.update("uuid-123", updateDto);
 
-      
       expect(repository.update).toHaveBeenCalledWith(
         mockSizeEntity.id,
         updateDto
       );
-      
-      expect(result).toEqual(mockSizeEntity)
+
+      expect(result).toEqual(mockSizeEntity);
     });
     it("deve retornar not found se não encontrar o size", async () => {
       const updateDto = { size: "XL" };

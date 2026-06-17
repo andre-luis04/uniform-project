@@ -37,11 +37,11 @@ export class ColorController {
     description: "No Content",
   })
   @HttpCode(204)
-  @Post()
   @ApiOperation({
     description: "cria uma cor",
     summary: "Adicionar uma nova cor",
   })
+  @Post()
   create(@Body() createColorDto: CreateColorDto) {
     return this.colorService.create(createColorDto);
   }
@@ -121,8 +121,8 @@ export class ColorController {
   })
   @ApiNotFoundResponse({ description: "**Cor não encontrada**" })
   @HttpCode(204)
-  @Delete(":id")
   @ApiOperation({ description: "exclui uma cor", summary: "Deletar uma cor" })
+  @Delete(":id")
   remove(@Param("id", ParseUUIDPipe) id: string) {
     return this.colorService.remove(id);
   }

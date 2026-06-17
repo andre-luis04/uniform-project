@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import cookieParse from "cookie-parser";
 import { AllExceptionsFilter } from "./shared/error.filter";
+import { apiReference } from "@scalar/nestjs-api-reference";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -26,6 +27,13 @@ async function bootstrap() {
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, documentFactory);
+
+  app.use(
+    "/reference",
+    apiReference({
+      content: documentFactory,
+    })
+  );
 
   await app.listen(3000, () => {
     console.log(`servidor executado`);
